@@ -1,0 +1,74 @@
+<div class="page-header-flex">
+  <h2>Manage Projects</h2>
+  <a href="/admin/projects/create" class="btn btn-primary">Add New Project</a>
+</div>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 50px">Order</th>
+        <th>Image</th>
+        <th>Title</th>
+        <th>Tech Stack</th>
+        <th>Featured</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (projects.length > 0) { %>
+        <% projects.forEach(project => { %>
+          <tr>
+            <td><%= project.sort_order %></td>
+            <td>
+              <% if (project.image) { %>
+                <img src="<%= project.image %>" alt="" class="table-thumb">
+              <% } else { %>
+                <div class="table-thumb-placeholder"><%= project.title.charAt(0) %></div>
+              <% } %>
+            </td>
+            <td>
+              <div class="project-info">
+                <strong><%= project.title %></strong>
+                <% if (project.github_repo_name) { %>
+                  <span class="github-badge" title="Imported from GitHub">GitHub</span>
+                <% } %>
+              </div>
+            </td>
+            <td>
+              <div class="tech-tags-small">
+                <% if (project.technologies && project.technologies.length) { %>
+                  <% project.technologies.slice(0, 3).forEach(tech => { %>
+                    <span><%= tech %></span>
+                  <% }) %>
+                  <% if (project.technologies.length > 3) { %>
+                    <span>+<%= project.technologies.length - 3 %></span>
+                  <% } %>
+                <% } %>
+              </div>
+            </td>
+            <td>
+              <% if (project.is_featured) { %>
+                <span class="status-badge status-success">Featured</span>
+              <% } else { %>
+                <span class="status-badge status-neutral">Standard</span>
+              <% } %>
+            </td>
+            <td>
+              <div class="action-group">
+                <a href="/admin/projects/<%= project.id %>/edit" class="btn-icon" title="Edit">✏️</a>
+                <form action="/admin/projects/<%= project.id %>/delete" method="POST" onsubmit="return confirm('Are you sure you want to delete this project?');" style="display:inline;">
+                  <button type="submit" class="btn-icon btn-icon-danger" title="Delete">🗑️</button>
+                </form>
+              </div>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr>
+          <td colspan="6" class="text-center">No projects found. <a href="/admin/projects/create">Create one</a> or <a href="/admin/github">import from GitHub</a>.</td>
+        </tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

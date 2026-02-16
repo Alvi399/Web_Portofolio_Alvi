@@ -1,0 +1,48 @@
+<div class="dashboard-grid">
+  <div class="stat-card">
+    <div class="stat-icon">📁</div>
+    <div class="stat-content">
+      <h3>Projects</h3>
+      <p class="stat-value"><%= projectCount %></p>
+    </div>
+    <a href="/admin/projects" class="stat-link">Manage Projects &rarr;</a>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🛠️</div>
+    <div class="stat-content">
+      <h3>Skills</h3>
+      <p class="stat-value"><%= skillCount %></p>
+    </div>
+    <a href="/admin/skills" class="stat-link">Manage Skills &rarr;</a>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">📬</div>
+    <div class="stat-content">
+      <h3>Messages</h3>
+      <p class="stat-value"><%= messageCount %></p>
+      <% if (unreadCount > 0) { %>
+        <span class="badge badge-warning"><%= unreadCount %> unread</span>
+      <% } %>
+    </div>
+    <a href="/admin/contacts" class="stat-link">View Messages &rarr;</a>
+  </div>
+
+  <div class="stat-card">
+    <div class="stat-icon">🐙</div>
+    <div class="stat-content">
+      <h3>GitHub Import</h3>
+      <p class="stat-description">Sync projects from GitHub</p>
+    </div>
+    <a href="/admin/github" class="stat-link">Import Now &rarr;</a>
+  </div>
+</div>
+
+<div class="dashboard-section">
+  <h2 class="section-title">Quick Actions</h2>
+  <div class="action-buttons">
+    <a href="/admin/projects/create" class="btn btn-primary">Add New Project</a>
+    <a href="/admin/profile" class="btn btn-secondary">Update Profile</a>
+  </div>
+</div>

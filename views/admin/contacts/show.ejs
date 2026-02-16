@@ -1,0 +1,25 @@
+<div class="page-header-flex">
+  <h2>View Message</h2>
+  <a href="/admin/contacts" class="btn btn-secondary">Back to Inbox</a>
+</div>
+
+<div class="message-card">
+  <div class="message-header">
+    <div class="message-meta">
+      <span class="message-from"><strong>From:</strong> <%= contact.name %> &lt;<%= contact.email %>&gt;</span>
+      <span class="message-date"><%= new Date(contact.createdAt).toLocaleString() %></span>
+    </div>
+    <h3 class="message-subject"><%= contact.subject || '(No Subject)' %></h3>
+  </div>
+  
+  <div class="message-body">
+    <%- contact.message.replace(/\n/g, '<br>') %>
+  </div>
+  
+  <div class="message-actions">
+    <a href="mailto:<%= contact.email %>?subject=Re: <%= contact.subject %>" class="btn btn-primary">Reply via Email</a>
+    <form action="/admin/contacts/<%= contact.id %>/delete" method="POST" onsubmit="return confirm('Delete message?');" style="display:inline;">
+      <button type="submit" class="btn btn-danger">Delete Message</button>
+    </form>
+  </div>
+</div>

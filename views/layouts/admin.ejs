@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> | Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin-body">
+  <aside class="admin-sidebar" id="adminSidebar">
+    <div class="sidebar-header">
+      <a href="/admin" class="sidebar-logo">⚡ Admin</a>
+      <button class="sidebar-close" id="sidebarClose">✕</button>
+    </div>
+    <nav class="sidebar-nav">
+      <a href="/admin" class="sidebar-link <%= title === 'Dashboard' ? 'active' : '' %>">📊 Dashboard</a>
+      <a href="/admin/projects" class="sidebar-link <%= title === 'Manage Projects' || title === 'Add Project' || title === 'Edit Project' ? 'active' : '' %>">📁 Projects</a>
+      <a href="/admin/skills" class="sidebar-link <%= title === 'Manage Skills' ? 'active' : '' %>">🛠️ Skills</a>
+      <a href="/admin/contacts" class="sidebar-link <%= title === 'Messages' || title === 'View Message' ? 'active' : '' %>">📬 Messages</a>
+      <a href="/admin/profile" class="sidebar-link <%= title === 'Edit Profile' ? 'active' : '' %>">👤 Profile</a>
+      <a href="/admin/github" class="sidebar-link <%= title === 'Import from GitHub' ? 'active' : '' %>">🐙 GitHub Import</a>
+      <hr class="sidebar-divider">
+      <a href="/" class="sidebar-link" target="_blank">🌐 View Site</a>
+      <a href="/admin/logout" class="sidebar-link sidebar-logout">🚪 Logout</a>
+    </nav>
+  </aside>
+
+  <main class="admin-main">
+    <header class="admin-header">
+      <button class="sidebar-toggle" id="sidebarToggle">☰</button>
+      <h1 class="admin-title"><%= title %></h1>
+      <div class="admin-user">
+        <span>👋 <%= typeof user !== 'undefined' && user ? user.username : 'Admin' %></span>
+      </div>
+    </header>
+    <div class="admin-content">
+      <%- body %>
+    </div>
+  </main>
+
+  <script>
+    const toggle = document.getElementById('sidebarToggle');
+    const sidebar = document.getElementById('adminSidebar');
+    const close = document.getElementById('sidebarClose');
+    if (toggle) toggle.addEventListener('click', () => sidebar.classList.toggle('open'));
+    if (close) close.addEventListener('click', () => sidebar.classList.remove('open'));
+  </script>
+</body>
+</html>

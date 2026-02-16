@@ -1,0 +1,67 @@
+<section class="page-header">
+  <div class="container">
+    <h1 class="page-title">About Me</h1>
+    <p class="page-subtitle">Get to know the person behind the code.</p>
+  </div>
+</section>
+
+<section class="section about-content">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-profile">
+        <div class="profile-card">
+          <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
+            <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>">
+          <% } else { %>
+            <div class="profile-placeholder large">
+              <span><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name.charAt(0) : 'A' %></span>
+            </div>
+          <% } %>
+          <div class="profile-info">
+            <h3><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name : 'Alvi' %></h3>
+            <p><%= typeof profile !== 'undefined' && profile.tagline ? profile.tagline : 'Full Stack Developer' %></p>
+            <div class="profile-meta">
+              <% if (profile.location) { %>
+                <span>📍 <%= profile.location %></span>
+              <% } %>
+              <% if (profile.email) { %>
+                <span>📧 <%= profile.email %></span>
+              <% } %>
+            </div>
+            <% if (profile.resume_url) { %>
+              <a href="<%= profile.resume_url %>" class="btn btn-primary btn-block" target="_blank">Download Resume</a>
+            <% } %>
+          </div>
+        </div>
+      </div>
+      
+      <div class="about-text">
+        <h2 class="section-title">My Journey</h2>
+        <div class="bio-text">
+          <% if (typeof profile !== 'undefined' && profile.bio) { %>
+            <%- profile.bio.replace(/\n/g, '<br>') %>
+          <% } else { %>
+            <p>Welcome to my portfolio! I am a passionate developer dedicated to creating meaningful digital experiences.</p>
+          <% } %>
+        </div>
+
+        <h2 class="section-title mt-large">Technical Skills</h2>
+        <% if (skillsByCategory && Object.keys(skillsByCategory).length > 0) { %>
+          <% Object.keys(skillsByCategory).forEach(category => { %>
+            <div class="skill-category">
+              <h3 class="category-title"><%= category %></h3>
+              <div class="category-skills">
+                <% skillsByCategory[category].forEach(skill => { %>
+                  <div class="skill-tag">
+                    <span class="skill-icon-small"><%= skill.icon || '•' %></span>
+                    <%= skill.name %>
+                  </div>
+                <% }) %>
+              </div>
+            </div>
+          <% }) %>
+        <% } %>
+      </div>
+    </div>
+  </div>
+</section>

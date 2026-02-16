@@ -1,0 +1,70 @@
+<div class="page-header-flex">
+  <h2>Manage Skills</h2>
+  <button onclick="toggleAddForm()" class="btn btn-primary">Add New Skill</button>
+</div>
+
+<div id="addSkillForm" class="panel hidden mb-4">
+  <h3>Add New Skill</h3>
+  <form action="/admin/skills" method="POST" class="inline-form">
+    <div class="form-group">
+      <input type="text" name="name" placeholder="Skill Name (e.g. React)" required class="form-control">
+    </div>
+    <div class="form-group">
+      <select name="category" class="form-control">
+        <option value="Frontend">Frontend</option>
+        <option value="Backend">Backend</option>
+        <option value="Database">Database</option>
+        <option value="Tools">Tools</option>
+        <option value="Other">Other</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <input type="number" name="proficiency" placeholder="0-100" min="0" max="100" class="form-control">
+    </div>
+    <div class="form-group">
+      <input type="text" name="icon" placeholder="Emoji/Icon" class="form-control">
+    </div>
+    <button type="submit" class="btn btn-success">Save</button>
+    <button type="button" onclick="toggleAddForm()" class="btn btn-secondary">Cancel</button>
+  </form>
+</div>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Icon</th>
+        <th>Name</th>
+        <th>Proficiency</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% skills.forEach(skill => { %>
+        <tr>
+          <td><span class="badge badge-info"><%= skill.category %></span></td>
+          <td><%= skill.icon %></td>
+          <td><strong><%= skill.name %></strong></td>
+          <td>
+            <div class="progress-bar-mini">
+              <div class="progress-fill" style="width: <%= skill.proficiency %>%"></div>
+            </div>
+            <small><%= skill.proficiency %>%</small>
+          </td>
+          <td>
+            <form action="/admin/skills/<%= skill.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete skill?');">
+              <button type="submit" class="btn-icon btn-icon-danger">🗑️</button>
+            </form>
+          </td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+</div>
+
+<script>
+function toggleAddForm() {
+  document.getElementById('addSkillForm').classList.toggle('hidden');
+}
+</script>

@@ -1,0 +1,74 @@
+<div class="page-header-flex">
+  <h2><%= project ? 'Edit Project' : 'Add New Project' %></h2>
+  <a href="/admin/projects" class="btn btn-secondary">Cancel</a>
+</div>
+
+<form action="<%= project ? '/admin/projects/' + project.id : '/admin/projects' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-group">
+        <label for="title">Project Title</label>
+        <input type="text" id="title" name="title" value="<%= project ? project.title : '' %>" required class="form-control">
+      </div>
+      
+      <div class="form-group">
+        <label for="description">Description</label>
+        <textarea id="description" name="description" rows="5" class="form-control"><%= project ? project.description : '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="technologies">Technologies (comma separated)</label>
+        <input type="text" id="technologies" name="technologies" value="<%= project && project.technologies && Array.isArray(project.technologies) ? project.technologies.join(', ') : '' %>" placeholder="React, Node.js, MySQL" class="form-control">
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="project_url">Project URL</label>
+          <input type="url" id="project_url" name="project_url" value="<%= project ? project.project_url : '' %>" placeholder="https://example.com" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="github_url">GitHub URL</label>
+          <input type="url" id="github_url" name="github_url" value="<%= project ? project.github_url : '' %>" placeholder="https://github.com/..." class="form-control">
+        </div>
+      </div>
+    </div>
+
+    <div class="form-col">
+      <div class="form-group">
+        <label>Project Image</label>
+        <div class="image-preview-container">
+          <% if (project && project.image) { %>
+            <img src="<%= project.image %>" alt="Preview" class="image-preview">
+          <% } %>
+        </div>
+        <input type="file" name="image" class="form-control file-input">
+        <small class="text-muted">Leave empty to keep current image</small>
+      </div>
+
+      <div class="form-group">
+        <label for="sort_order">Sort Order</label>
+        <input type="number" id="sort_order" name="sort_order" value="<%= project ? project.sort_order : 0 %>" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-container">
+          <input type="checkbox" name="is_featured" <%= project && project.is_featured ? 'checked' : '' %>>
+          <span class="checkmark"></span>
+          Feature on Homepage
+        </label>
+      </div>
+
+      <% if (project && project.github_repo_name) { %>
+        <div class="form-group info-box">
+          <label>GitHub Stats</label>
+          <p><strong>Repo:</strong> <%= project.github_repo_name %></p>
+          <p><strong>Stars:</strong> <%= project.stars %></p>
+        </div>
+      <% } %>
+    </div>
+  </div>
+
+  <div class="form-actions">
+    <button type="submit" class="btn btn-primary"><%= project ? 'Update Project' : 'Create Project' %></button>
+  </div>
+</form>

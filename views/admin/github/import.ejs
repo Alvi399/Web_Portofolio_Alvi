@@ -1,0 +1,73 @@
+<div class="page-header-flex">
+  <h2>Import from GitHub</h2>
+</div>
+
+<div class="github-import-container">
+  <div class="search-panel">
+    <form action="/admin/github/fetch" method="POST" class="search-form">
+      <div class="form-group">
+        <label for="username">GitHub Username</label>
+        <div class="input-group">
+          <input type="text" id="username" name="username" value="<%= username %>" placeholder="e.g. facebook" required class="form-control">
+          <button type="submit" class="btn btn-primary">Fetch Repositories</button>
+        </div>
+      </div>
+    </form>
+    <% if (error) { %>
+      <div class="alert alert-error"><%= error %></div>
+    <% } %>
+  </div>
+
+  <% if (repos) { %>
+    <form action="/admin/github/import" method="POST" class="import-form">
+      <div class="repos-list">
+        <h3>Found <%= repos.length %> Public Repositories</h3>
+        <p class="mb-4 text-muted">Select repositories to import as portfolio projects.</p>
+        
+        <div class="repos-grid">
+          <% repos.forEach((repo, index) => { %>
+            <div class="repo-card-select">
+              <label class="repo-checkbox">
+                <input type="checkbox" name="selected_repos" value="<%= index %>">
+                <span class="repo-content">
+                  <span class="repo-header">
+                    <span class="repo-name"><%= repo.name %></span>
+                    <% if (repo.language) { %>
+                      <span class="repo-lang"><%= repo.language %></span>
+                    <% } %>
+                  </span>
+                  <p class="repo-desc"><%= repo.description || 'No description' %></p>
+                  <span class="repo-meta">⭐ <%= repo.stargazers_count %> stars • <%= new Date(repo.updated_at).toLocaleDateString() %></span>
+                </span>
+              </label>
+            </div>
+          <% }) %>
+        </div>
+      </div>
+      
+      <input type="hidden" name="repos" value='<%- JSON.stringify(repos) %>'>
+      
+      <div class="import-actions sticky-bottom">
+        <button type="submit" class="btn btn-success btn-lg">Import Selected Projects</button>
+      </div>
+    </form>
+    
+    <script>
+      // Filter selected repos before submit
+      document.querySelector('.import-form').addEventListener('submit', function(e) {
+        const checkboxes = document.querySelectorAll('input[name="selected_repos"]:checked');
+        if (checkboxes.length === 0) {
+          e.preventDefault();
+          alert('Please select at least one repository to import.');
+          return;
+        }
+        
+        const allRepos = JSON.parse(this.querySelector('input[name="repos"]').value);
+        const selectedIndices = Array.from(checkboxes).map(cb => parseInt(cb.value));
+        const selectedRepos = selectedIndices.map(i => allRepos[i]);
+        
+        this.querySelector('input[name="repos"]').value = JSON.stringify(selectedRepos);
+      });
+    </script>
+  <% } %>
+</div>
