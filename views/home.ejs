@@ -85,7 +85,8 @@
               <span class="skill-icon"><%= skill.icon || '🔹' %></span>
               <span class="skill-name"><%= skill.name %></span>
               <div class="skill-level">
-                <div class="skill-progress" style="width: <%= skill.proficiency %>%"></div>
+                <% const widthStyle = `width: ${skill.proficiency}%;`; %>
+                <div class="skill-progress" style="<%= widthStyle %>"></div>
               </div>
             </div>
           <% }) %>
@@ -93,3 +94,75 @@
     </div>
   </div>
 </section>
+
+<!-- Journey Preview Section -->
+<section class="section timeline-section">
+  <div class="container">
+    <div class="section-header center">
+      <h2 class="section-title">My Journey</h2>
+    </div>
+    
+    <div class="timeline">
+      <% if (typeof journeys !== 'undefined' && journeys.length > 0) { %>
+        <% journeys.forEach((item, index) => { %>
+          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %>">
+            <div class="timeline-content">
+              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) %></span>
+              <% if (item.image_url) { %>
+                <img src="<%= item.image_url %>" alt="<%= item.title %>" class="timeline-img">
+              <% } %>
+              <h3 class="timeline-title"><%= item.title %></h3>
+              <p class="timeline-desc">
+                <%= item.description.length > 100 ? item.description.substring(0, 100) + '...' : item.description %>
+              </p>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-center text-muted">Journey details coming soon...</p>
+      <% } %>
+    </div>
+    
+    <div class="text-center mt-large">
+      <a href="/journey" class="btn btn-outline">View Full Journey →</a>
+    </div>
+  </div>
+</section>
+
+<!-- Certificates Preview Section -->
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">Latest Certifications</h2>
+      <a href="/certificates" class="section-link">View All Certifications →</a>
+    </div>
+    
+    <div class="certificates-grid">
+      <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
+        <% certificates.forEach(cert => { %>
+          <div class="certificate-card">
+            <div class="cert-image">
+              <% if (cert.image_url) { %>
+                <img src="<%= cert.image_url %>" alt="<%= cert.title %>">
+              <% } else { %>
+                <div class="cert-placeholder">📜</div>
+              <% } %>
+            </div>
+            <div class="cert-content">
+              <div class="cert-meta">
+                <span class="cert-date"><%= new Date(cert.date).getFullYear() %></span>
+                <span class="cert-category"><%= cert.category %></span>
+              </div>
+              <h3 class="cert-title"><%= cert.title %></h3>
+              <div class="cert-issuer">Issued by <%= cert.issuer %></div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-center text-muted" style="grid-column: 1/-1;">No certifications added yet.</p>
+      <% } %>
+    </div>
+  </div>
+</section>
+
+

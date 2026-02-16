@@ -8,5 +8,7 @@ router.get('/projects', homeController.projects);
 router.get('/projects/:slug', homeController.projectDetail);
 router.get('/contact', homeController.contact);
 router.post('/contact', homeController.submitContact);
+router.get('/certificates', homeController.certificates);
+router.get('/journey', homeController.journey);
 
 module.exports = router;

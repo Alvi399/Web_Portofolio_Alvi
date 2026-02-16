@@ -1,0 +1,41 @@
+<div class="page-header">
+  <div class="container">
+    <h1 class="page-title">Certifications</h1>
+    <p class="page-subtitle">My professional qualifications and achievements</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="container">
+    <div class="certificates-grid">
+      <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
+        <% certificates.forEach(cert => { %>
+          <div class="certificate-card">
+            <div class="cert-image">
+              <% if (cert.image_url) { %>
+                <img src="<%= cert.image_url %>" alt="<%= cert.title %>">
+              <% } else { %>
+                <div class="cert-placeholder">📜</div>
+              <% } %>
+            </div>
+            <div class="cert-content">
+              <div class="cert-meta">
+                <span class="cert-date"><%= new Date(cert.date).getFullYear() %></span>
+                <span class="cert-category"><%= cert.category %></span>
+              </div>
+              <h3 class="cert-title"><%= cert.title %></h3>
+              <div class="cert-issuer">Issued by <%= cert.issuer %></div>
+              <div class="cert-links">
+                <% if (cert.credential_url) { %>
+                  <a href="<%= cert.credential_url %>" target="_blank" class="btn btn-outline btn-sm btn-block">View Credential</a>
+                <% } %>
+              </div>
+            </div>
+          </div>
+        <% }) %>
+      <% } else { %>
+        <p class="text-center text-muted" style="grid-column: 1/-1;">No certifications added yet.</p>
+      <% } %>
+    </div>
+  </div>
+</section>

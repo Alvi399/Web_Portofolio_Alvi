@@ -1,5 +1,5 @@
 const bcrypt = require('bcryptjs');
-const { User, Project, Skill, Contact, Profile } = require('../models');
+const { User, Project, Skill, Contact, Profile, Certificate, Journey } = require('../models');
 const slugify = require('slugify');
 const path = require('path');
 const fs = require('fs');
@@ -285,5 +285,93 @@ exports.githubImport = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.redirect('/admin/github?error=Import failed');
+  }
+};
+
+// --- Certificates CRUD ---
+exports.certificatesList = async (req, res) => {
+  const certificates = await Certificate.findAll({ order: [['date', 'DESC']] });
+  res.render('admin/certificates/index', { title: 'Manage Certificates', certificates, layout: 'layouts/admin' });
+};
+
+exports.certificateStore = async (req, res) => {
+  try {
+    const { title, issuer, date, credential_url, image_url, category } = req.body;
+    await Certificate.create({
+      title, issuer, date, credential_url, image_url, category
+    });
+    res.redirect('/admin/certificates');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/certificates');
+  }
+};
+
+exports.certificateUpdate = async (req, res) => {
+  try {
+    const cert = await Certificate.findByPk(req.params.id);
+    if (!cert) return res.redirect('/admin/certificates');
+    const { title, issuer, date, credential_url, image_url, category } = req.body;
+    await cert.update({
+      title, issuer, date, credential_url, image_url, category
+    });
+    res.redirect('/admin/certificates');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/certificates');
+  }
+};
+
+exports.certificateDelete = async (req, res) => {
+  try {
+    await Certificate.destroy({ where: { id: req.params.id } });
+    res.redirect('/admin/certificates');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/certificates');
+  }
+};
+
+// --- Journey CRUD ---
+exports.journeyList = async (req, res) => {
+  const journeys = await Journey.findAll({ order: [['date', 'DESC']] });
+  res.render('admin/journey/index', { title: 'Manage Journey', journeys, layout: 'layouts/admin' });
+};
+
+exports.journeyStore = async (req, res) => {
+  try {
+    const { title, description, date, image_url } = req.body;
+    await Journey.create({
+      title, description, date, image_url
+    });
+    res.redirect('/admin/journey');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/journey');
+  }
+};
+
+exports.journeyUpdate = async (req, res) => {
+  try {
+    const item = await Journey.findByPk(req.params.id);
+    if (!item) return res.redirect('/admin/journey');
+    const { title, description, date, image_url } = req.body;
+    await item.update({
+      title, description, date, image_url
+    });
+    res.redirect('/admin/journey');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/journey');
+  }
+};
+
+exports.journeyDelete = async (req, res) => {
+  try {
+    await Journey.destroy({ where: { id: req.params.id } });
+    res.redirect('/admin/journey');
+  } catch (err) {
+    console.error(err);
+    res.redirect('/admin/journey');
   }
 };

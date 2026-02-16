@@ -1,4 +1,4 @@
-const { Project, Skill, Profile, Contact } = require('../models');
+const { Project, Skill, Profile, Contact, Certificate, Journey } = require('../models');
 
 exports.home = async (req, res) => {
   try {
@@ -9,11 +9,18 @@ exports.home = async (req, res) => {
       limit: 6
     });
     const skills = await Skill.findAll({ order: [['sort_order', 'ASC']] });
+    
+    // Fetch preview data for home page
+    const certificates = await Certificate.findAll({ limit: 4, order: [['date', 'DESC']] });
+    const journeys = await Journey.findAll({ limit: 4, order: [['date', 'DESC']] });
+
     res.render('home', {
       title: 'Home',
       profile: profile || {},
       projects,
       skills,
+      certificates,
+      journeys,
       currentPage: 'home'
     });
   } catch (err) {
@@ -91,6 +98,7 @@ exports.contact = async (req, res) => {
   }
 };
 
+
 exports.submitContact = async (req, res) => {
   try {
     const { name, email, subject, message } = req.body;
@@ -104,3 +112,36 @@ exports.submitContact = async (req, res) => {
     res.redirect('/contact?error=Failed to send message');
   }
 };
+
+exports.certificates = async (req, res) => {
+  try {
+    const profile = await Profile.findOne();
+    const certificates = await Certificate.findAll({ order: [['date', 'DESC']] });
+    res.render('certificates', {
+      title: 'Certifications',
+      profile: profile || {},
+      certificates,
+      currentPage: 'certificates'
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { title: 'Error', message: 'Server error' });
+  }
+};
+
+exports.journey = async (req, res) => {
+  try {
+    const profile = await Profile.findOne();
+    const journeys = await Journey.findAll({ order: [['date', 'DESC']] });
+    res.render('journey', {
+      title: 'My Journey',
+      profile: profile || {},
+      journeys,
+      currentPage: 'journey'
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).render('error', { title: 'Error', message: 'Server error' });
+  }
+};
+

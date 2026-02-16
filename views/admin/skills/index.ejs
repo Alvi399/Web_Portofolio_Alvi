@@ -48,7 +48,8 @@
           <td><strong><%= skill.name %></strong></td>
           <td>
             <div class="progress-bar-mini">
-              <div class="progress-fill" style="width: <%= skill.proficiency %>%"></div>
+              <% const widthStyle = `width: ${skill.proficiency}%;`; %>
+              <div class="progress-fill" style="<%= widthStyle %>"></div>
             </div>
             <small><%= skill.proficiency %>%</small>
           </td>

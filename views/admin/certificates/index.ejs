@@ -1,0 +1,161 @@
+<div class="page-header-flex">
+  <h2>Manage Certificates</h2>
+  <button onclick="toggleAddForm()" class="btn btn-primary">Add New Certificate</button>
+</div>
+
+<div id="addCertificateForm" class="panel hidden mb-4">
+  <h3>Add New Certificate</h3>
+  <form action="/admin/certificates" method="POST" class="admin-form">
+    <div class="form-grid">
+      <div class="form-col">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" name="title" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Issuer</label>
+          <input type="text" name="issuer" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select name="category" class="form-control">
+            <option value="Backend">Backend</option>
+            <option value="Frontend">Frontend</option>
+            <option value="AI">AI</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" name="date" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Credential URL</label>
+          <input type="url" name="credential_url" placeholder="https://..." class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Image URL (External)</label>
+          <input type="url" name="image_url" placeholder="https://..." class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-success">Save</button>
+      <button type="button" onclick="toggleAddForm()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Title</th>
+        <th>Issuer</th>
+        <th>Category</th>
+        <th>Links</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (certificates.length > 0) { %>
+        <% certificates.forEach(cert => { %>
+          <tr>
+            <td><%= new Date(cert.date).toLocaleDateString() %></td>
+            <td><strong><%= cert.title %></strong></td>
+            <td><%= cert.issuer %></td>
+            <td><span class="badge badge-info"><%= cert.category %></span></td>
+            <td>
+              <% if (cert.credential_url) { %> <a href="<%= cert.credential_url %>" target="_blank">Link</a> <% } %>
+              <% if (cert.image_url) { %> <a href="<%= cert.image_url %>" target="_blank">Image</a> <% } %>
+            </td>
+            <td>
+              <button onclick="editCertificate('<%= cert.id %>', '<%= cert.title %>', '<%= cert.issuer %>', '<%= cert.date %>', '<%= cert.category %>', '<%= cert.credential_url %>', '<%= cert.image_url %>')" class="btn-icon" title="Edit">✏️</button>
+              <form action="/admin/certificates/<%= cert.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete certificate?');">
+                <button type="submit" class="btn-icon btn-icon-danger">🗑️</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="6" class="text-center">No certificates found.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>
+
+<!-- Edit Modal Implementation (Simple hidden form toggle approach for now) -->
+<div id="editCertificateForm" class="panel hidden mb-4" style="border-left: 4px solid var(--warning);">
+  <h3>Edit Certificate</h3>
+  <form id="editForm" action="" method="POST" class="admin-form">
+    <div class="form-grid">
+      <div class="form-col">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="edit_title" name="title" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Issuer</label>
+          <input type="text" id="edit_issuer" name="issuer" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Category</label>
+          <select id="edit_category" name="category" class="form-control">
+            <option value="Backend">Backend</option>
+            <option value="Frontend">Frontend</option>
+            <option value="AI">AI</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+      </div>
+      <div class="form-col">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="edit_date" name="date" required class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Credential URL</label>
+          <input type="url" id="edit_credential_url" name="credential_url" class="form-control">
+        </div>
+        <div class="form-group">
+          <label>Image URL</label>
+          <input type="url" id="edit_image_url" name="image_url" class="form-control">
+        </div>
+      </div>
+    </div>
+    <div class="form-actions">
+      <button type="submit" class="btn btn-warning">Update</button>
+      <button type="button" onclick="cancelEdit()" class="btn btn-secondary">Cancel</button>
+    </div>
+  </form>
+</div>
+
+<script>
+function toggleAddForm() {
+  document.getElementById('addCertificateForm').classList.toggle('hidden');
+  document.getElementById('editCertificateForm').classList.add('hidden');
+}
+
+function editCertificate(id, title, issuer, date, category, credUrl, imgUrl) {
+  document.getElementById('addCertificateForm').classList.add('hidden');
+  const editPanel = document.getElementById('editCertificateForm');
+  editPanel.classList.remove('hidden');
+  
+  document.getElementById('editForm').action = '/admin/certificates/' + id;
+  document.getElementById('edit_title').value = title;
+  document.getElementById('edit_issuer').value = issuer;
+  document.getElementById('edit_date').value = date; // Format standard YYYY-MM-DD usually works if value is correct
+  document.getElementById('edit_category').value = category;
+  document.getElementById('edit_credential_url').value = credUrl;
+  document.getElementById('edit_image_url').value = imgUrl;
+  
+  editPanel.scrollIntoView({ behavior: 'smooth' });
+}
+
+function cancelEdit() {
+  document.getElementById('editCertificateForm').classList.add('hidden');
+}
+</script>

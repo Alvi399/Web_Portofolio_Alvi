@@ -37,12 +37,19 @@
             </td>
             <td>
               <div class="tech-tags-small">
-                <% if (project.technologies && project.technologies.length) { %>
-                  <% project.technologies.slice(0, 3).forEach(tech => { %>
+                <% 
+                  let techs = project.technologies;
+                  if (typeof techs === 'string') {
+                    try { techs = JSON.parse(techs); } catch (e) { techs = []; }
+                  }
+                  if (!Array.isArray(techs)) techs = [];
+                %>
+                <% if (techs.length > 0) { %>
+                  <% techs.slice(0, 3).forEach(tech => { %>
                     <span><%= tech %></span>
                   <% }) %>
-                  <% if (project.technologies.length > 3) { %>
-                    <span>+<%= project.technologies.length - 3 %></span>
+                  <% if (techs.length > 3) { %>
+                    <span>+<%= techs.length - 3 %></span>
                   <% } %>
                 <% } %>
               </div>

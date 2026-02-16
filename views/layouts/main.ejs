@@ -22,6 +22,8 @@
         <li><a href="/" class="<%= typeof currentPage !== 'undefined' && currentPage === 'home' ? 'active' : '' %>">Home</a></li>
         <li><a href="/about" class="<%= typeof currentPage !== 'undefined' && currentPage === 'about' ? 'active' : '' %>">About</a></li>
         <li><a href="/projects" class="<%= typeof currentPage !== 'undefined' && currentPage === 'projects' ? 'active' : '' %>">Projects</a></li>
+        <li><a href="/certificates" class="<%= typeof currentPage !== 'undefined' && currentPage === 'certificates' ? 'active' : '' %>">Certificates</a></li>
+        <li><a href="/journey" class="<%= typeof currentPage !== 'undefined' && currentPage === 'journey' ? 'active' : '' %>">Journey</a></li>
         <li><a href="/contact" class="<%= typeof currentPage !== 'undefined' && currentPage === 'contact' ? 'active' : '' %>">Contact</a></li>
         <% if (typeof user !== 'undefined' && user) { %>
           <li><a href="/admin" class="nav-admin-btn">Dashboard</a></li>

@@ -5,9 +5,16 @@ const path = require('path');
 const { isAuthenticated } = require('../middleware/auth');
 const admin = require('../controllers/adminController');
 
+const fs = require('fs');
+
 // Multer config for file uploads
+const uploadDir = path.join(__dirname, '..', 'public', 'uploads');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => cb(null, path.join(__dirname, '..', 'public', 'uploads')),
+  destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + '-' + Math.round(Math.random() * 1E9) + path.extname(file.originalname);
     cb(null, uniqueName);
@@ -60,5 +67,17 @@ router.post('/profile', upload.single('profile_image'), admin.profileUpdate);
 router.get('/github', admin.githubImportPage);
 router.post('/github/fetch', admin.githubFetch);
 router.post('/github/import', admin.githubImport);
+
+// Certificates
+router.get('/certificates', admin.certificatesList);
+router.post('/certificates', admin.certificateStore);
+router.post('/certificates/:id', admin.certificateUpdate);
+router.post('/certificates/:id/delete', admin.certificateDelete);
+
+// Journey
+router.get('/journey', admin.journeyList);
+router.post('/journey', admin.journeyStore);
+router.post('/journey/:id', admin.journeyUpdate);
+router.post('/journey/:id/delete', admin.journeyDelete);
 
 module.exports = router;
