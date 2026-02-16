@@ -12,8 +12,8 @@
         <% projects.forEach(project => { %>
           <article class="project-card fade-in">
             <div class="project-image">
-              <% if (project.image) { %>
-                <img src="<%= project.image %>" alt="<%= project.title %>">
+              <% if (project.image_url || project.image) { %>
+                <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
               <% } else { %>
                 <div class="project-placeholder">
                   <span><%= project.title.charAt(0) %></span>

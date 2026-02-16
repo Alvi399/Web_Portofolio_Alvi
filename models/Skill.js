@@ -7,6 +7,7 @@ const Skill = sequelize.define('Skill', {
   category: { type: DataTypes.STRING, defaultValue: 'General' },
   proficiency: { type: DataTypes.INTEGER, defaultValue: 50 },
   icon: { type: DataTypes.STRING, defaultValue: '' },
+  image_url: { type: DataTypes.STRING, defaultValue: '' },
   sort_order: { type: DataTypes.INTEGER, defaultValue: 0 }
 }, { tableName: 'skills', timestamps: true });
 

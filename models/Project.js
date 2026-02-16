@@ -7,6 +7,7 @@ const Project = sequelize.define('Project', {
   slug: { type: DataTypes.STRING, unique: true, allowNull: false },
   description: { type: DataTypes.TEXT, defaultValue: '' },
   image: { type: DataTypes.STRING, defaultValue: '' },
+  image_url: { type: DataTypes.STRING, defaultValue: '' },
   technologies: {
     type: DataTypes.TEXT,
     defaultValue: '[]',

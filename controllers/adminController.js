@@ -68,7 +68,7 @@ exports.projectCreate = (req, res) => {
 
 exports.projectStore = async (req, res) => {
   try {
-    const { title, description, technologies, project_url, github_url, github_repo_name, stars, is_featured, sort_order } = req.body;
+    const { title, description, technologies, project_url, github_url, github_repo_name, stars, is_featured, sort_order, image_url } = req.body;
     const slug = slugify(title, { lower: true, strict: true });
     const techArray = technologies ? technologies.split(',').map(t => t.trim()).filter(Boolean) : [];
     await Project.create({
@@ -80,7 +80,8 @@ exports.projectStore = async (req, res) => {
       stars: parseInt(stars) || 0,
       is_featured: is_featured === 'on',
       sort_order: parseInt(sort_order) || 0,
-      image: req.file ? '/uploads/' + req.file.filename : ''
+      image: req.file ? '/uploads/' + req.file.filename : '',
+      image_url: image_url || ''
     });
     res.redirect('/admin/projects');
   } catch (err) {
@@ -99,7 +100,7 @@ exports.projectUpdate = async (req, res) => {
   try {
     const project = await Project.findByPk(req.params.id);
     if (!project) return res.redirect('/admin/projects');
-    const { title, description, technologies, project_url, github_url, github_repo_name, stars, is_featured, sort_order } = req.body;
+    const { title, description, technologies, project_url, github_url, github_repo_name, stars, is_featured, sort_order, image_url } = req.body;
     const slug = slugify(title, { lower: true, strict: true });
     const techArray = technologies ? technologies.split(',').map(t => t.trim()).filter(Boolean) : [];
     await project.update({
@@ -111,7 +112,8 @@ exports.projectUpdate = async (req, res) => {
       stars: parseInt(stars) || 0,
       is_featured: is_featured === 'on',
       sort_order: parseInt(sort_order) || 0,
-      image: req.file ? '/uploads/' + req.file.filename : project.image
+      image: req.file ? '/uploads/' + req.file.filename : project.image,
+      image_url: image_url || ''
     });
     res.redirect('/admin/projects');
   } catch (err) {
@@ -138,11 +140,12 @@ exports.skillsList = async (req, res) => {
 
 exports.skillStore = async (req, res) => {
   try {
-    const { name, category, proficiency, icon, sort_order } = req.body;
+    const { name, category, proficiency, icon, image_url, sort_order } = req.body;
     await Skill.create({
       name, category: category || 'General',
       proficiency: parseInt(proficiency) || 50,
       icon: icon || '',
+      image_url: image_url || '',
       sort_order: parseInt(sort_order) || 0
     });
     res.redirect('/admin/skills');
@@ -156,11 +159,12 @@ exports.skillUpdate = async (req, res) => {
   try {
     const skill = await Skill.findByPk(req.params.id);
     if (!skill) return res.redirect('/admin/skills');
-    const { name, category, proficiency, icon, sort_order } = req.body;
+    const { name, category, proficiency, icon, image_url, sort_order } = req.body;
     await skill.update({
       name, category: category || 'General',
       proficiency: parseInt(proficiency) || 50,
       icon: icon || '',
+      image_url: image_url || '',
       sort_order: parseInt(sort_order) || 0
     });
     res.redirect('/admin/skills');

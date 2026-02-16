@@ -37,12 +37,19 @@
       <div class="form-group">
         <label>Project Image</label>
         <div class="image-preview-container">
-          <% if (project && project.image) { %>
-            <img src="<%= project.image %>" alt="Preview" class="image-preview">
+          <% if (project && (project.image_url || project.image)) { %>
+            <img src="<%= project.image_url || project.image %>" alt="Preview" class="image-preview">
           <% } %>
         </div>
-        <input type="file" name="image" class="form-control file-input">
-        <small class="text-muted">Leave empty to keep current image</small>
+        <div class="mb-2">
+          <label for="image_url" class="small text-muted">External Image URL</label>
+          <input type="url" id="image_url" name="image_url" value="<%= project ? project.image_url : '' %>" placeholder="https://..." class="form-control">
+        </div>
+        <div>
+          <label class="small text-muted">Or Upload Local Image</label>
+          <input type="file" name="image" class="form-control file-input">
+        </div>
+        <small class="text-muted">External URL takes precedence over local upload</small>
       </div>
 
       <div class="form-group">

@@ -39,8 +39,8 @@
         <% projects.forEach(project => { %>
           <article class="project-card">
             <div class="project-image">
-              <% if (project.image) { %>
-                <img src="<%= project.image %>" alt="<%= project.title %>">
+              <% if (project.image_url || project.image) { %>
+                <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
               <% } else { %>
                 <div class="project-placeholder">
                   <span><%= project.title.charAt(0) %></span>
@@ -82,7 +82,11 @@
        <% if (skills && skills.length > 0) { %>
           <% skills.forEach(skill => { %>
             <div class="skill-card">
-              <span class="skill-icon"><%= skill.icon || '🔹' %></span>
+              <% if (skill.image_url) { %>
+                <img src="<%= skill.image_url %>" alt="<%= skill.name %>" class="skill-icon-img" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 0.5rem;">
+              <% } else { %>
+                <span class="skill-icon"><%= skill.icon || '🔹' %></span>
+              <% } %>
               <span class="skill-name"><%= skill.name %></span>
               <div class="skill-level">
                 <% const widthStyle = `width: ${skill.proficiency}%;`; %>

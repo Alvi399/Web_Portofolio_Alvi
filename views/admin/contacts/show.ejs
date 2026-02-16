@@ -17,7 +17,11 @@
   </div>
   
   <div class="message-actions">
-    <a href="mailto:<%= contact.email %>?subject=Re: <%= contact.subject %>" class="btn btn-primary">Reply via Email</a>
+    <% 
+      const mailtoSubject = encodeURIComponent('Re: ' + (contact.subject || 'Your message'));
+      const mailtoLink = `mailto:${contact.email}?subject=${mailtoSubject}`;
+    %>
+    <a href="<%= mailtoLink %>" class="btn btn-primary">Reply via Email</a>
     <form action="/admin/contacts/<%= contact.id %>/delete" method="POST" onsubmit="return confirm('Delete message?');" style="display:inline;">
       <button type="submit" class="btn btn-danger">Delete Message</button>
     </form>

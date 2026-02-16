@@ -21,8 +21,8 @@
           <tr>
             <td><%= project.sort_order %></td>
             <td>
-              <% if (project.image) { %>
-                <img src="<%= project.image %>" alt="" class="table-thumb">
+              <% if (project.image_url || project.image) { %>
+                <img src="<%= project.image_url || project.image %>" alt="" class="table-thumb">
               <% } else { %>
                 <div class="table-thumb-placeholder"><%= project.title.charAt(0) %></div>
               <% } %>
