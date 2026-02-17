@@ -36,11 +36,13 @@ exports.logout = (req, res) => {
 // --- Dashboard ---
 exports.dashboard = async (req, res) => {
   try {
-    const [projectCount, skillCount, messageCount, unreadCount] = await Promise.all([
+    const [projectCount, skillCount, messageCount, unreadCount, certificateCount, journeyCount] = await Promise.all([
       Project.count(),
       Skill.count(),
       Contact.count(),
-      Contact.count({ where: { is_read: false } })
+      Contact.count({ where: { is_read: false } }),
+      Certificate.count(),
+      Journey.count()
     ]);
     res.render('admin/dashboard', {
       title: 'Dashboard',
@@ -48,6 +50,8 @@ exports.dashboard = async (req, res) => {
       skillCount,
       messageCount,
       unreadCount,
+      certificateCount,
+      journeyCount,
       layout: 'layouts/admin'
     });
   } catch (err) {

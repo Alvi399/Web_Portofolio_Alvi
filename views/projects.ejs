@@ -1,5 +1,5 @@
 <section class="page-header">
-  <div class="container">
+  <div class="container animate-on-scroll fade-up">
     <h1 class="page-title">Projects</h1>
     <p class="page-subtitle">A showcase of my recent work and open source contributions.</p>
   </div>
@@ -10,7 +10,7 @@
     <div class="projects-grid">
       <% if (projects && projects.length > 0) { %>
         <% projects.forEach(project => { %>
-          <article class="project-card fade-in">
+          <article class="project-card animate-on-scroll fade-up">
             <div class="project-image">
               <% if (project.image_url || project.image) { %>
                 <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">

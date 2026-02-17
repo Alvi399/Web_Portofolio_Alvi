@@ -1,5 +1,5 @@
 <div class="page-header">
-  <div class="container">
+  <div class="container animate-on-scroll fade-up">
     <h1 class="page-title">Certifications</h1>
     <p class="page-subtitle">My professional qualifications and achievements</p>
   </div>
@@ -10,7 +10,7 @@
     <div class="certificates-grid">
       <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
         <% certificates.forEach(cert => { %>
-          <div class="certificate-card">
+          <div class="certificate-card animate-on-scroll fade-up">
             <div class="cert-image">
               <% if (cert.image_url) { %>
                 <img src="<%= cert.image_url %>" alt="<%= cert.title %>">

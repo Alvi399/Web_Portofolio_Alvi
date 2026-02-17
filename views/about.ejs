@@ -1,5 +1,5 @@
 <section class="page-header">
-  <div class="container">
+  <div class="container animate-on-scroll fade-up">
     <h1 class="page-title">About Me</h1>
     <p class="page-subtitle">Get to know the person behind the code.</p>
   </div>
@@ -9,7 +9,7 @@
   <div class="container">
     <div class="about-grid">
       <div class="about-profile">
-        <div class="profile-card">
+        <div class="profile-card animate-on-scroll fade-right">
           <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
             <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>">
           <% } else { %>
@@ -35,7 +35,7 @@
         </div>
       </div>
       
-      <div class="about-text">
+      <div class="about-text animate-on-scroll fade-left">
         <h2 class="section-title">My Journey</h2>
         <div class="bio-text">
           <% if (typeof profile !== 'undefined' && profile.bio) { %>

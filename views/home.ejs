@@ -1,6 +1,6 @@
 <section class="hero">
   <div class="container hero-container">
-    <div class="hero-content">
+    <div class="hero-content animate-on-scroll fade-up">
       <h1 class="hero-title">
         Hello, I'm <span class="highlight"><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name : 'Alvi' %></span>
       </h1>
@@ -15,7 +15,7 @@
         <a href="/contact" class="btn btn-outline">Contact Me</a>
       </div>
     </div>
-    <div class="hero-image">
+    <div class="hero-image animate-on-scroll fade-left">
       <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
         <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>" class="profile-img">
       <% } else { %>
@@ -29,7 +29,7 @@
 
 <section class="section featured-projects">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header animate-on-scroll fade-up">
       <h2 class="section-title">Featured Projects</h2>
       <a href="/projects" class="section-link">View All &rarr;</a>
     </div>
@@ -37,7 +37,7 @@
     <div class="projects-grid">
       <% if (projects && projects.length > 0) { %>
         <% projects.forEach(project => { %>
-          <article class="project-card">
+          <article class="project-card animate-on-scroll fade-up">
             <div class="project-image">
               <% if (project.image_url || project.image) { %>
                 <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
@@ -77,11 +77,11 @@
 
 <section class="section skills-section">
   <div class="container">
-    <h2 class="section-title center">Skills & Expertise</h2>
+    <h2 class="section-title center animate-on-scroll fade-up">Skills & Expertise</h2>
     <div class="skills-grid">
        <% if (skills && skills.length > 0) { %>
           <% skills.forEach(skill => { %>
-            <div class="skill-card">
+            <div class="skill-card animate-on-scroll scale-in">
               <% if (skill.image_url) { %>
                 <img src="<%= skill.image_url %>" alt="<%= skill.name %>" class="skill-icon-img" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 0.5rem;">
               <% } else { %>
@@ -102,14 +102,14 @@
 <!-- Journey Preview Section -->
 <section class="section timeline-section">
   <div class="container">
-    <div class="section-header center">
+    <div class="section-header center animate-on-scroll fade-up">
       <h2 class="section-title">My Journey</h2>
     </div>
     
     <div class="timeline">
       <% if (typeof journeys !== 'undefined' && journeys.length > 0) { %>
         <% journeys.forEach((item, index) => { %>
-          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %>">
+          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %> animate-on-scroll <%= index % 2 === 0 ? 'fade-right' : 'fade-left' %>">
             <div class="timeline-content">
               <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) %></span>
               <% if (item.image_url) { %>
@@ -136,7 +136,7 @@
 <!-- Certificates Preview Section -->
 <section class="section">
   <div class="container">
-    <div class="section-header">
+    <div class="section-header animate-on-scroll fade-up">
       <h2 class="section-title">Latest Certifications</h2>
       <a href="/certificates" class="section-link">View All Certifications →</a>
     </div>
@@ -144,7 +144,7 @@
     <div class="certificates-grid">
       <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
         <% certificates.forEach(cert => { %>
-          <div class="certificate-card">
+          <div class="certificate-card animate-on-scroll fade-up">
             <div class="cert-image">
               <% if (cert.image_url) { %>
                 <img src="<%= cert.image_url %>" alt="<%= cert.title %>">

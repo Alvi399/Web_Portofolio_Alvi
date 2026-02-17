@@ -1,5 +1,5 @@
 <div class="page-header">
-  <div class="container">
+  <div class="container animate-on-scroll fade-up">
     <h1 class="page-title">My Journey</h1>
     <p class="page-subtitle">A timeline of my professional and personal growth</p>
   </div>
@@ -10,7 +10,7 @@
     <div class="timeline">
       <% if (typeof journeys !== 'undefined' && journeys.length > 0) { %>
         <% journeys.forEach((item, index) => { %>
-          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %>">
+          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %> animate-on-scroll <%= index % 2 === 0 ? 'fade-right' : 'fade-left' %>">
             <div class="timeline-content" 
                  data-id="<%= item.id %>"
                  data-title="<%= item.title %>"

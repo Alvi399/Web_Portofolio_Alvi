@@ -27,19 +27,24 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Fade In Animation on Scroll
-  const fadeElements = document.querySelectorAll('.project-card, .skill-card');
+  // ===== MODERN SCROLL ANIMATIONS =====
+  // Intersection Observer for scroll animations
+  const animateElements = document.querySelectorAll('.animate-on-scroll');
   
+  const observerOptions = {
+    threshold: 0.15,
+    rootMargin: '0px 0px -50px 0px'
+  };
+
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
+        entry.target.classList.add('animated');
+        // Unobserve after animation for better performance
         observer.unobserve(entry.target);
       }
     });
-  }, {
-    threshold: 0.1
-  });
+  }, observerOptions);
 
-  fadeElements.forEach(el => observer.observe(el));
+  animateElements.forEach(el => observer.observe(el));
 });
