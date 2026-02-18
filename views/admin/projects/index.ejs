@@ -22,7 +22,7 @@
             <td><%= project.sort_order %></td>
             <td>
               <% if (project.image_url || project.image) { %>
-                <img src="<%= project.image_url || project.image %>" alt="" class="table-thumb">
+                <img src="<%= getImageUrl(project.image_url || project.image) %>" alt="" class="table-thumb" onerror="handleImageError(this)">
               <% } else { %>
                 <div class="table-thumb-placeholder"><%= project.title.charAt(0) %></div>
               <% } %>

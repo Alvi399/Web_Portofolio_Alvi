@@ -17,7 +17,7 @@
     </div>
     <div class="hero-image animate-on-scroll fade-left">
       <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
-        <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>" class="profile-img">
+        <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>" class="profile-img" onerror="handleImageError(this)">
       <% } else { %>
         <div class="profile-placeholder">
           <span><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name.charAt(0) : 'A' %></span>
@@ -40,7 +40,7 @@
           <article class="project-card animate-on-scroll fade-up">
             <div class="project-image">
               <% if (project.image_url || project.image) { %>
-                <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
+                <img src="<%= getImageUrl(project.image_url || project.image) %>" alt="<%= project.title %>" onerror="handleImageError(this)">
               <% } else { %>
                 <div class="project-placeholder">
                   <span><%= project.title.charAt(0) %></span>
@@ -83,7 +83,7 @@
           <% skills.forEach(skill => { %>
             <div class="skill-card animate-on-scroll scale-in">
               <% if (skill.image_url) { %>
-                <img src="<%= skill.image_url %>" alt="<%= skill.name %>" class="skill-icon-img" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 0.5rem;">
+                <img src="<%= getImageUrl(skill.image_url) %>" alt="<%= skill.name %>" class="skill-icon-img" style="width: 40px; height: 40px; object-fit: contain; margin-bottom: 0.5rem;" onerror="handleImageError(this)">
               <% } else { %>
                 <span class="skill-icon"><%= skill.icon || '🔹' %></span>
               <% } %>
@@ -111,9 +111,9 @@
         <% journeys.forEach((item, index) => { %>
           <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %> animate-on-scroll <%= index % 2 === 0 ? 'fade-right' : 'fade-left' %>">
             <div class="timeline-content">
-              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) %></span>
+              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
               <% if (item.image_url) { %>
-                <img src="<%= item.image_url %>" alt="<%= item.title %>" class="timeline-img">
+                <img src="<%= getImageUrl(item.image_url) %>" alt="<%= item.title %>" class="timeline-img" onerror="handleImageError(this)">
               <% } %>
               <h3 class="timeline-title"><%= item.title %></h3>
               <p class="timeline-desc">
@@ -147,7 +147,7 @@
           <div class="certificate-card animate-on-scroll fade-up">
             <div class="cert-image">
               <% if (cert.image_url) { %>
-                <img src="<%= cert.image_url %>" alt="<%= cert.title %>">
+                <img src="<%= getImageUrl(cert.image_url) %>" alt="<%= cert.title %>" onerror="handleImageError(this)">
               <% } else { %>
                 <div class="cert-placeholder">📜</div>
               <% } %>

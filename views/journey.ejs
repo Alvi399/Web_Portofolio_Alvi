@@ -18,9 +18,9 @@
                  data-image="<%= item.image_url || '' %>"
                  data-description="<%= item.description %>"
                  onclick="openJourneyModal(this)">
-              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) %></span>
+              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
               <% if (item.image_url) { %>
-                <img src="<%= item.image_url %>" alt="<%= item.title %>" class="timeline-img">
+                <img src="<%= getImageUrl(item.image_url) %>" alt="<%= item.title %>" class="timeline-img" onerror="handleImageError(this)">
               <% } %>
               <h3 class="timeline-title"><%= item.title %></h3>
               <p class="timeline-desc">
@@ -171,13 +171,17 @@ function openJourneyModal(element) {
 
   const modal = document.getElementById('journeyModal');
   document.getElementById('modalTitle').innerText = title;
-  document.getElementById('modalDate').innerText = new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long' });
+  document.getElementById('modalDate').innerText = new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('modalDescription').innerText = description;
   
   const img = document.getElementById('modalImage');
   if (imageUrl) {
-    img.src = imageUrl;
+    // Use convertImageUrl from imageUtils.js
+    img.src = window.convertImageUrl ? window.convertImageUrl(imageUrl) : imageUrl;
     img.classList.remove('hidden');
+    img.onerror = function() {
+      handleImageError(this);
+    };
   } else {
     img.classList.add('hidden');
   }

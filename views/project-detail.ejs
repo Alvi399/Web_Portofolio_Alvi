@@ -34,7 +34,7 @@
   <div class="container project-body">
     <% if (project.image_url || project.image) { %>
       <div class="project-hero-image">
-        <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
+        <img src="<%= getImageUrl(project.image_url || project.image) %>" alt="<%= project.title %>" onerror="handleImageError(this)">
       </div>
     <% } %>
     

@@ -53,7 +53,7 @@
             <td><%= new Date(item.date).toLocaleDateString() %></td>
             <td>
               <% if (item.image_url) { %>
-                <img src="<%= item.image_url %>" alt="" class="table-thumb" style="width: 50px; height: 50px; object-fit: cover;">
+                <img src="<%= getImageUrl(item.image_url) %>" alt="" class="table-thumb" style="width: 50px; height: 50px; object-fit: cover;" onerror="handleImageError(this)">
               <% } %>
             </td>
             <td><strong><%= item.title %></strong></td>

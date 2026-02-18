@@ -9,7 +9,8 @@ const adminRoutes = require('./routes/admin');
 const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+app.set('trust proxy', 1);
+const PORT = process.env.PORT || 3005;
 
 // View engine
 app.use(expressLayouts);
@@ -31,6 +32,9 @@ app.use(session({
 // Make session user available to all views
 app.use((req, res, next) => {
   res.locals.user = req.session.userId ? { id: req.session.userId, username: req.session.username } : null;
+  // Add image helper
+  const { getImageUrl } = require('./helpers/imageHelper');
+  res.locals.getImageUrl = getImageUrl;
   next();
 });
 

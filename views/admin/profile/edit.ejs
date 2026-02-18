@@ -24,7 +24,7 @@
         <label>Profile Image</label>
         <div class="image-preview-container">
           <% if (profile.profile_image) { %>
-            <img src="<%= profile.profile_image %>" alt="Profile" class="image-preview">
+            <img src="<%= getImageUrl(profile.profile_image) %>" alt="Profile" class="image-preview" onerror="handleImageError(this)">
           <% } %>
         </div>
         <input type="file" name="profile_image" class="form-control file-input">

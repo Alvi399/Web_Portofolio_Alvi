@@ -13,7 +13,7 @@
           <div class="certificate-card animate-on-scroll fade-up">
             <div class="cert-image">
               <% if (cert.image_url) { %>
-                <img src="<%= cert.image_url %>" alt="<%= cert.title %>">
+                <img src="<%= getImageUrl(cert.image_url) %>" alt="<%= cert.title %>" onerror="handleImageError(this)">
               <% } else { %>
                 <div class="cert-placeholder">📜</div>
               <% } %>

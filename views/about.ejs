@@ -11,7 +11,7 @@
       <div class="about-profile">
         <div class="profile-card animate-on-scroll fade-right">
           <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
-            <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>">
+            <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>" onerror="handleImageError(this)">
           <% } else { %>
             <div class="profile-placeholder large">
               <span><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name.charAt(0) : 'A' %></span>
@@ -54,7 +54,7 @@
                 <% skillsByCategory[category].forEach(skill => { %>
                   <div class="skill-tag">
                     <% if (skill.image_url) { %>
-                      <img src="<%= skill.image_url %>" alt="<%= skill.name %>" class="skill-icon-small-img" style="width: 20px; height: 20px; object-fit: contain; margin-right: 0.5rem;">
+                      <img src="<%= getImageUrl(skill.image_url) %>" alt="<%= skill.name %>" class="skill-icon-small-img" style="width: 20px; height: 20px; object-fit: contain; margin-right: 0.5rem;" onerror="this.style.display='none';">
                     <% } else { %>
                       <span class="skill-icon-small"><%= skill.icon || '•' %></span>
                     <% } %>

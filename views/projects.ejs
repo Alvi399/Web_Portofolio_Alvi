@@ -13,7 +13,7 @@
           <article class="project-card animate-on-scroll fade-up">
             <div class="project-image">
               <% if (project.image_url || project.image) { %>
-                <img src="<%= project.image_url || project.image %>" alt="<%= project.title %>">
+                <img src="<%= getImageUrl(project.image_url || project.image) %>" alt="<%= project.title %>" onerror="handleImageError(this)">
               <% } else { %>
                 <div class="project-placeholder">
                   <span><%= project.title.charAt(0) %></span>

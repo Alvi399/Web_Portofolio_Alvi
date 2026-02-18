@@ -49,7 +49,7 @@
           <td><span class="badge badge-info"><%= skill.category %></span></td>
           <td>
             <% if (skill.image_url) { %>
-              <img src="<%= skill.image_url %>" alt="<%= skill.name %>" style="width: 24px; height: 24px; object-fit: contain;">
+              <img src="<%= getImageUrl(skill.image_url) %>" alt="<%= skill.name %>" style="width: 24px; height: 24px; object-fit: contain;" onerror="handleImageError(this)">
             <% } else { %>
               <%= skill.icon %>
             <% } %>
