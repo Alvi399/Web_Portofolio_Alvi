@@ -23,6 +23,8 @@ body {
   background-color: var(--bg);
   color: var(--text);
   line-height: 1.6;
+  -webkit-print-color-adjust: exact !important;
+  print-color-adjust: exact !important;
 }
 
 a {
@@ -1207,5 +1209,317 @@ textarea:focus {
     transition: none !important;
     opacity: 1 !important;
     transform: none !important;
+  }
+}
+
+/* Secret Resume Button */
+.secret-btn {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 999;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  opacity: 0.05; /* Barely visible */
+}
+
+.secret-btn:hover {
+  opacity: 1;
+  color: var(--primary);
+  border-color: var(--primary);
+  transform: scale(1.1) rotate(5deg);
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+
+/* Modal System */
+.resume-modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(8px);
+  z-index: 2000;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.resume-modal.active {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+.resume-modal .modal-content {
+  background: var(--bg);
+  width: 100%;
+  max-width: 900px;
+  border-radius: 1.5rem;
+  border: 1px solid var(--border);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+@keyframes modalIn {
+  from { opacity: 0; transform: translateY(20px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.resume-modal .modal-header {
+  padding: 1.5rem 2rem;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  background: var(--bg);
+  z-index: 10;
+  border-top-left-radius: 1.5rem;
+  border-top-right-radius: 1.5rem;
+}
+
+.resume-modal .modal-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+.resume-modal .modal-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+.resume-modal .close-modal {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  line-height: 1;
+  padding: 0;
+  margin-left: 0.5rem;
+  transition: color 0.2s;
+}
+
+.resume-modal .close-modal:hover {
+  color: #ef4444;
+}
+
+.resume-modal .modal-body {
+  padding: 2.5rem;
+}
+
+/* Resume Styling (Inside Modal) */
+.resume-container {
+  color: #f1f5f9;
+}
+
+.resume-header {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 3rem;
+  border-bottom: 2px solid var(--primary);
+  padding-bottom: 2rem;
+}
+
+.resume-profile-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 12px;
+  object-fit: cover;
+  border: 2px solid var(--border);
+}
+
+.resume-header-info h1 {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.resume-header-info .tagline {
+  font-size: 1.25rem;
+  color: var(--primary);
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.resume-section {
+  margin-bottom: 3rem;
+}
+
+.resume-section-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 1.5rem;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.resume-section-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.resume-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.resume-item {
+  margin-bottom: 1.5rem;
+}
+
+.resume-item h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.5rem;
+}
+
+.resume-item-meta {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.resume-item-img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  margin-top: 0.5rem;
+  display: block;
+}
+
+.resume-bio {
+  line-height: 1.8;
+  color: #cbd5e1;
+}
+
+/* Loading Spinner */
+.resume-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  gap: 1.5rem;
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(59, 130, 246, 0.1);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@media print {
+  @page {
+    margin: 10mm;
+    size: A4;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  body {
+    background-color: #0f172a !important; /* Force dark background */
+    color: #e2e8f0 !important;
+  }
+
+  .resume-modal {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: #0f172a !important;
+    padding: 0;
+    overflow: visible;
+    display: block !important;
+  }
+
+  .resume-modal .modal-content {
+    box-shadow: none;
+    border: none;
+    max-width: 100%;
+    margin: 0;
+    background: transparent !important;
+  }
+
+  .resume-modal .modal-header, 
+  .secret-btn, 
+  .navbar, 
+  .footer,
+  .btn,
+  #navToggle,
+  .hero-cta {
+    display: none !important;
+  }
+
+  .resume-modal .modal-body {
+    padding: 0;
+  }
+
+  .resume-container {
+    color: #e2e8f0 !important;
+    background: #0f172a !important;
+  }
+
+  .resume-header {
+    border-bottom: 2px solid #3b82f6 !important;
+  }
+
+  .resume-section-title {
+    color: #3b82f6 !important;
+  }
+
+  .resume-section-title::after {
+    background: #334155 !important;
+  }
+
+  .skill-tag {
+    background: #1e293b !important;
+    border: 1px solid #334155 !important;
+    color: #e2e8f0 !important;
+  }
+
+  .tag {
+    background: rgba(59, 130, 246, 0.2) !important;
+    color: #3b82f6 !important;
+  }
+
+  .resume-item {
+    page-break-inside: avoid;
+  }
+
+  img {
+    max-width: 100% !important;
+    filter: none !important;
   }
 }
