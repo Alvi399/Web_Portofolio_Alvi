@@ -1,70 +1,86 @@
-<section class="page-header">
-  <div class="container animate-on-scroll fade-up">
-    <h1 class="page-title">About Me</h1>
-    <p class="page-subtitle">Get to know the person behind the code.</p>
+<header class="page-head">
+  <div class="container animate-on-scroll">
+    <h1 class="page-title"><%= t('Tentang Saya', 'About Me') %></h1>
+    <p class="page-subtitle"><%= typeof profile !== 'undefined' && profile.looking_for ? tField(profile, 'looking_for') : 'Get to know the person behind the code.' %></p>
   </div>
-</section>
+</header>
 
-<section class="section about-content">
+<section class="section">
   <div class="container">
     <div class="about-grid">
-      <div class="about-profile">
-        <div class="profile-card animate-on-scroll fade-right">
-          <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
+      <aside class="about-aside animate-on-scroll">
+        <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
+          <div class="portrait">
             <img src="<%= profile.profile_image %>" alt="<%= profile.full_name %>" onerror="handleImageError(this)">
-          <% } else { %>
-            <div class="profile-placeholder large">
-              <span><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name.charAt(0) : 'A' %></span>
-            </div>
-          <% } %>
-          <div class="profile-info">
-            <h3><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name : 'Alvi' %></h3>
-            <p><%= typeof profile !== 'undefined' && profile.tagline ? profile.tagline : 'Full Stack Developer' %></p>
-            <div class="profile-meta">
-              <% if (profile.location) { %>
-                <span>📍 <%= profile.location %></span>
-              <% } %>
-              <% if (profile.email) { %>
-                <span>📧 <%= profile.email %></span>
-              <% } %>
-            </div>
-            <% if (profile.resume_url) { %>
-              <a href="<%= profile.resume_url %>" class="btn btn-primary btn-block" target="_blank">Download Resume</a>
+          </div>
+        <% } %>
+        
+        <div class="fact-card">
+          <h2>Profile Facts</h2>
+          <dl>
+            <dt>Name</dt>
+            <dd><%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name : 'Alvi' %></dd>
+            
+            <dt>Role</dt>
+            <dd><%= typeof profile !== 'undefined' && profile.tagline ? profile.tagline : 'Full Stack Developer' %></dd>
+            
+            <% if (typeof profile !== 'undefined' && profile.location) { %>
+              <dt>Location</dt>
+              <dd><%= profile.location %></dd>
             <% } %>
+            
+            <% if (typeof profile !== 'undefined' && profile.email) { %>
+              <dt>Email</dt>
+              <dd><%= profile.email %></dd>
+            <% } %>
+          </dl>
+          
+          <div style="margin-top: 1.5rem;">
+            <a href="/cv" class="btn btn-primary btn-block link-arrow">View ATS CV <span>→</span></a>
           </div>
         </div>
-      </div>
+      </aside>
       
-      <div class="about-text animate-on-scroll fade-left">
-        <h2 class="section-title">My Journey</h2>
-        <div class="bio-text">
-          <% if (typeof profile !== 'undefined' && profile.bio) { %>
-            <%- profile.bio.replace(/\n/g, '<br>') %>
+      <div class="about-text animate-on-scroll">
+        <% if (typeof profile !== 'undefined' && profile.about_summary) { %>
+          <p class="lead"><%- nl2br(tField(profile, 'about_summary')) %></p>
+        <% } %>
+
+        <% if (typeof profile !== 'undefined' && profile.looking_for) { %>
+          <div class="callout">
+            <h2>Target Role</h2>
+            <p><%- nl2br(tField(profile, 'looking_for')) %></p>
+          </div>
+        <% } %>
+
+        <div class="about-block prose">
+          <h2>My Background</h2>
+          <% if (typeof profile !== 'undefined' && (profile.bio || profile.bio_en)) { %>
+            <%- nl2br(tField(profile, 'bio')) %>
           <% } else { %>
             <p>Welcome to my portfolio! I am a passionate developer dedicated to creating meaningful digital experiences.</p>
           <% } %>
         </div>
 
-        <h2 class="section-title mt-large">Technical Skills</h2>
-        <% if (skillsByCategory && Object.keys(skillsByCategory).length > 0) { %>
-          <% Object.keys(skillsByCategory).forEach(category => { %>
-            <div class="skill-category">
-              <h3 class="category-title"><%= category %></h3>
-              <div class="category-skills">
-                <% skillsByCategory[category].forEach(skill => { %>
-                  <div class="skill-tag">
-                    <% if (skill.image_url) { %>
-                      <img src="<%= getImageUrl(skill.image_url) %>" alt="<%= skill.name %>" class="skill-icon-small-img" style="width: 20px; height: 20px; object-fit: contain; margin-right: 0.5rem;" onerror="this.style.display='none';">
-                    <% } else { %>
-                      <span class="skill-icon-small"><%= skill.icon || '•' %></span>
-                    <% } %>
-                    <%= skill.name %>
-                  </div>
-                <% }) %>
+        <div class="about-block">
+          <h2>Technical Skills</h2>
+          <% if (typeof skillsByCategory !== 'undefined' && Object.keys(skillsByCategory).length > 0) { %>
+            <% Object.keys(skillsByCategory).forEach(category => { %>
+              <div class="stack-row">
+                <div class="stack-cat"><%= category %></div>
+                <ul class="stack-items">
+                  <% skillsByCategory[category].forEach(skill => { %>
+                    <li class="used"><%= skill.name %></li>
+                  <% }) %>
+                </ul>
               </div>
+            <% }) %>
+          <% } else { %>
+            <div class="empty">
+              <p>No skills have been added yet.</p>
             </div>
-          <% }) %>
-        <% } %>
+          <% } %>
+        </div>
       </div>
     </div>
   </div>

@@ -1,0 +1,78 @@
+<div class="page-header-flex">
+  <h2><%= item ? 'Edit Journey Event' : 'Add New Journey Event' %></h2>
+  <a href="/admin/journey" class="btn btn-secondary">Cancel</a>
+</div>
+
+<form action="<%= (item ? '/admin/journey/' + item.id : '/admin/journey') + '?_csrf=' + csrfToken %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-group">
+        <label for="title">Title / Judul Peran / Pendidikan</label>
+        <input type="text" id="title" name="title" value="<%= item ? item.title : '' %>" required class="form-control" placeholder="e.g. Senior Fullstack Developer / S1 Teknik Informatika">
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category / Kategori</label>
+        <select id="category" name="category" class="form-control">
+          <option value="experience" <%= item && item.category === 'experience' ? 'selected' : (!item ? 'selected' : '') %>>Experience (Pengalaman Kerja)</option>
+          <option value="education" <%= item && item.category === 'education' ? 'selected' : '' %>>Education (Pendidikan)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="description">Description / Deskripsi Pengalaman</label>
+        <textarea id="description" name="description" rows="5" class="form-control" placeholder="Tuliskan detail tanggung jawab, teknologi yang digunakan, atau pencapaian..."><%= item ? (item.description || '') : '' %></textarea>
+      </div>
+    </div>
+
+    <div class="form-col">
+      <div class="form-group">
+        <label for="date">Start Date / Tanggal Mulai</label>
+        <% const startDateVal = item && item.date ? (typeof item.date === 'string' ? item.date.substring(0, 10) : new Date(item.date).toISOString().substring(0, 10)) : ''; %>
+        <input type="date" id="date" name="date" value="<%= startDateVal %>" required class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="end_date">End Date / Tanggal Selesai</label>
+        <% const endDateVal = item && item.end_date ? (typeof item.end_date === 'string' ? item.end_date.substring(0, 10) : new Date(item.end_date).toISOString().substring(0, 10)) : ''; %>
+        <input type="date" id="end_date" name="end_date" value="<%= endDateVal %>" class="form-control">
+      </div>
+
+      <div class="form-group" style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.5rem;">
+        <input type="checkbox" name="is_current" id="is_current" <%= item && item.is_current ? 'checked' : '' %> style="width: auto;">
+        <label for="is_current" style="margin: 0; cursor: pointer; font-size: 0.9rem;">Present / Masih Berlangsung</label>
+      </div>
+
+      <div class="form-group">
+        <label for="image">Image Upload (Opsional)</label>
+        <input type="file" id="image" name="image" accept="image/*" class="form-control">
+        <% if (item && item.image) { %>
+          <div style="margin-top: 10px;">
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Gambar Saat Ini:</p>
+            <img src="<%= getImageUrl(item.image) %>" style="max-height: 100px; border-radius: 6px; border: 1px solid #ddd;" onerror="handleImageError(this)">
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <hr style="margin: 2rem 0; border: 0; border-top: 1px solid var(--border);">
+  <h3 style="color: var(--accent); margin-bottom: 1rem;">Bahasa Inggris (Versi Bahasa Inggris - Opsional)</h3>
+
+  <div class="form-group">
+    <label for="title_en">Title (EN)</label>
+    <input type="text" id="title_en" name="title_en" value="<%= item ? (item.title_en || '') : '' %>" class="form-control" placeholder="e.g. Senior Fullstack Developer">
+  </div>
+
+  <div class="form-group">
+    <label for="description_en">Description (EN)</label>
+    <textarea id="description_en" name="description_en" rows="4" class="form-control" placeholder="Write description in English..."><%= item ? (item.description_en || '') : '' %></textarea>
+  </div>
+
+  <div class="form-actions" style="margin-top: 2rem;">
+    <button type="submit" class="btn btn-success"><%= item ? 'Update Event' : 'Save Event' %></button>
+    <a href="/admin/journey" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>

@@ -113,9 +113,10 @@ function handleImageError(img, fallbackUrl) {
       // Or create a fallback text
       const parent = img.parentElement;
       if (parent) {
+         const initial = (img.alt && img.alt.trim()) ? img.alt.trim().charAt(0).toUpperCase() : 'M';
          const fallback = document.createElement('div');
          fallback.className = 'profile-placeholder';
-         fallback.innerHTML = '<span>?</span>';
+         fallback.innerHTML = `<span>${initial}</span>`;
          parent.appendChild(fallback);
       }
     }

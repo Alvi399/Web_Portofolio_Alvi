@@ -7,7 +7,6 @@ const Project = sequelize.define('Project', {
   slug: { type: DataTypes.STRING, unique: true, allowNull: false },
   description: { type: DataTypes.TEXT, defaultValue: '' },
   image: { type: DataTypes.STRING, defaultValue: '' },
-  image_url: { type: DataTypes.STRING, defaultValue: '' },
   technologies: {
     type: DataTypes.TEXT,
     defaultValue: '[]',
@@ -24,7 +23,16 @@ const Project = sequelize.define('Project', {
   github_repo_name: { type: DataTypes.STRING, defaultValue: '' },
   stars: { type: DataTypes.INTEGER, defaultValue: 0 },
   is_featured: { type: DataTypes.BOOLEAN, defaultValue: false },
-  sort_order: { type: DataTypes.INTEGER, defaultValue: 0 }
+  sort_order: { type: DataTypes.INTEGER, defaultValue: 0 },
+  problem: { type: DataTypes.TEXT, allowNull: true },
+  role: { type: DataTypes.STRING(120), allowNull: true },
+  impact: { type: DataTypes.TEXT, allowNull: true },
+  demo_url: { type: DataTypes.STRING(255), allowNull: true },
+  status: { type: DataTypes.ENUM('draft', 'published'), allowNull: false, defaultValue: 'published' },
+  description_en: { type: DataTypes.TEXT, allowNull: true },
+  problem_en: { type: DataTypes.TEXT, allowNull: true },
+  role_en: { type: DataTypes.STRING(120), allowNull: true },
+  impact_en: { type: DataTypes.TEXT, allowNull: true }
 }, { tableName: 'projects', timestamps: true });
 
 module.exports = Project;

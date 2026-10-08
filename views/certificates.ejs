@@ -1,41 +1,79 @@
-<div class="page-header">
-  <div class="container animate-on-scroll fade-up">
-    <h1 class="page-title">Certifications</h1>
+<header class="page-head">
+  <div class="container animate-on-scroll">
+    <h1 class="page-title"><%= t('Sertifikasi', 'Certifications') %></h1>
     <p class="page-subtitle">My professional qualifications and achievements</p>
+    
+    <div class="filter-bar">
+      <button class="filter-btn active" data-filter="all">All</button>
+      <button class="filter-btn" data-filter="Backend">Backend</button>
+      <button class="filter-btn" data-filter="Frontend">Frontend</button>
+      <button class="filter-btn" data-filter="AI">AI</button>
+      <button class="filter-btn" data-filter="Other">Other</button>
+    </div>
   </div>
-</div>
+</header>
 
 <section class="section">
   <div class="container">
-    <div class="certificates-grid">
+    <div class="cert-list animate-on-scroll">
       <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
         <% certificates.forEach(cert => { %>
-          <div class="certificate-card animate-on-scroll fade-up">
-            <div class="cert-image">
-              <% if (cert.image_url) { %>
-                <img src="<%= getImageUrl(cert.image_url) %>" alt="<%= cert.title %>" onerror="handleImageError(this)">
-              <% } else { %>
-                <div class="cert-placeholder">📜</div>
-              <% } %>
-            </div>
-            <div class="cert-content">
-              <div class="cert-meta">
-                <span class="cert-date"><%= new Date(cert.date).getFullYear() %></span>
-                <span class="cert-category"><%= cert.category %></span>
-              </div>
+          <div class="cert-row" data-category="<%= cert.category %>">
+            <div class="cert-year"><%= new Date(cert.date).getFullYear() %></div>
+            <div class="cert-body">
               <h3 class="cert-title"><%= cert.title %></h3>
-              <div class="cert-issuer">Issued by <%= cert.issuer %></div>
-              <div class="cert-links">
-                <% if (cert.credential_url) { %>
-                  <a href="<%= cert.credential_url %>" target="_blank" class="btn btn-outline btn-sm btn-block">View Credential</a>
-                <% } %>
-              </div>
+              <div class="cert-issuer">Issued by <%= cert.issuer %> &mdash; <%= cert.category %></div>
+            </div>
+            <div class="cert-action">
+              <% if (cert.credential_url) { %>
+                <a href="<%= cert.credential_url %>" target="_blank" class="btn btn-sm">View <span>→</span></a>
+              <% } %>
             </div>
           </div>
         <% }) %>
       <% } else { %>
-        <p class="text-center text-muted" style="grid-column: 1/-1;">No certifications added yet.</p>
+        <div class="empty">
+          <p>No certifications added yet.</p>
+        </div>
       <% } %>
     </div>
+
+    <% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
+      <div class="pagination-bar">
+        <% if (pagination.page > 1) { %>
+          <a href="?page=<%= pagination.page - 1 %>" class="btn btn-sm">&larr; Prev</a>
+        <% } %>
+        <span>
+          Page <%= pagination.page %> / <%= pagination.totalPages %>
+        </span>
+        <% if (pagination.page < pagination.totalPages) { %>
+          <a href="?page=<%= pagination.page + 1 %>" class="btn btn-sm">Next &rarr;</a>
+        <% } %>
+      </div>
+    <% } %>
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const certRows = document.querySelectorAll('.cert-row');
+
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const filter = btn.getAttribute('data-filter');
+
+      certRows.forEach(row => {
+        const cat = row.getAttribute('data-category');
+        if (filter === 'all' || cat === filter) {
+          row.style.display = 'grid';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  });
+});
+</script>

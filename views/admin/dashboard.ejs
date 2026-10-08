@@ -1,17 +1,22 @@
 <div class="dashboard-grid">
   <div class="stat-card">
     <div class="stat-icon">📁</div>
-    <div class="stat-content">
-      <h3>Projects</h3>
-      <p class="stat-value"><%= projectCount %></p>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">Projects</h3>
+      <div style="display:flex; align-items:center; gap: 0.5rem;">
+        <p class="stat-value"><%= projectCount %></p>
+        <% if (typeof draftProjectCount !== 'undefined' && draftProjectCount > 0) { %>
+          <span class="badge badge-warning"><%= draftProjectCount %> Draft</span>
+        <% } %>
+      </div>
     </div>
     <a href="/admin/projects" class="stat-link">Manage Projects &rarr;</a>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon">🛠️</div>
-    <div class="stat-content">
-      <h3>Skills</h3>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">Skills</h3>
       <p class="stat-value"><%= skillCount %></p>
     </div>
     <a href="/admin/skills" class="stat-link">Manage Skills &rarr;</a>
@@ -19,47 +24,92 @@
 
   <div class="stat-card">
     <div class="stat-icon">📬</div>
-    <div class="stat-content">
-      <h3>Messages</h3>
-      <p class="stat-value"><%= messageCount %></p>
-      <% if (unreadCount > 0) { %>
-        <span class="badge badge-warning"><%= unreadCount %> unread</span>
-      <% } %>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">Messages</h3>
+      <div style="display:flex; align-items:center; gap: 0.5rem;">
+        <p class="stat-value"><%= messageCount %></p>
+        <% if (unreadCount > 0) { %>
+          <span class="badge" style="background: #fee2e2; color: #991b1b;"><%= unreadCount %> Unread</span>
+        <% } %>
+      </div>
     </div>
     <a href="/admin/contacts" class="stat-link">View Messages &rarr;</a>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon">📜</div>
-    <div class="stat-content">
-      <h3>Certificates</h3>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">Certificates</h3>
       <p class="stat-value"><%= certificateCount %></p>
     </div>
     <a href="/admin/certificates" class="stat-link">Manage Certificates &rarr;</a>
   </div>
 
   <div class="stat-card">
-    <div class="stat-icon">🚀</div>
-    <div class="stat-content">
-      <h3>Journey</h3>
-      <p class="stat-value"><%= journeyCount %></p>
+    <div class="stat-icon">💬</div>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">Testimonials</h3>
+      <p class="stat-value"><%= typeof testimonialCount !== 'undefined' ? testimonialCount : 0 %></p>
     </div>
-    <a href="/admin/journey" class="stat-link">Manage Journey &rarr;</a>
+    <a href="/admin/testimonials" class="stat-link">Manage Testimonials &rarr;</a>
   </div>
 
   <div class="stat-card">
     <div class="stat-icon">🐙</div>
-    <div class="stat-content">
-      <h3>GitHub Import</h3>
-      <p class="stat-description">Sync projects from GitHub</p>
+    <div>
+      <h3 style="margin:0 0 0.2rem 0; font-size: 0.9rem; color: #666; font-weight: 500;">GitHub Import</h3>
+      <p style="font-size: 0.85rem; color: #888; margin: 0;">Sync projects from GitHub</p>
     </div>
     <a href="/admin/github" class="stat-link">Import Now &rarr;</a>
   </div>
 </div>
 
-<div class="dashboard-section">
-  <h2 class="section-title">Quick Actions</h2>
-  <div class="action-buttons">
+<!-- T-40 & T-44 Analytics & Profile Completeness -->
+<div class="dashboard-grid mt-4" style="grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 2rem;">
+  
+  <!-- 30-Day Analytics Card -->
+  <div class="admin-form" style="padding: 1.5rem; margin-bottom: 0;">
+    <h3 style="margin: 0 0 1rem 0; display: flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; color: var(--text-dark);">
+      📊 Ringkasan Analitik (30 Hari Terakhir)
+    </h3>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+      <div style="background: #f9f9f9; padding: 1rem; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+        <span style="font-size: 1.75rem; font-weight: 800; color: var(--text-dark);"><%= analytics ? analytics.cvDownloads : 0 %></span>
+        <p style="font-size: 0.85rem; color: #666; margin: 0.25rem 0 0 0;">📄 Unduhan CV</p>
+      </div>
+      <div style="background: #f9f9f9; padding: 1rem; border-radius: 6px; border: 1px solid var(--border); text-align: center;">
+        <span style="font-size: 1.75rem; font-weight: 800; color: var(--text-dark);"><%= analytics ? analytics.projectViews : 0 %></span>
+        <p style="font-size: 0.85rem; color: #666; margin: 0.25rem 0 0 0;">👁️ Detail Project View</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Profile Completeness Score Card -->
+  <div class="admin-form" style="padding: 1.5rem; margin-bottom: 0;">
+    <h3 style="margin: 0 0 1rem 0; display: flex; align-items: center; justify-content: space-between; font-size: 1.1rem; color: var(--text-dark);">
+      <span>🎯 Kelengkapan Profil</span>
+      <span style="font-weight: 800; color: <%= (typeof profileCompleteness !== 'undefined' && profileCompleteness >= 80) ? 'var(--success)' : '#d97706' %>">
+        <%= typeof profileCompleteness !== 'undefined' ? profileCompleteness : 0 %>%
+      </span>
+    </h3>
+    <div style="width: 100%; background: #e5e5e5; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 1rem;">
+      <div style="background: var(--text-dark); height: 100%; width: <%= typeof profileCompleteness !== 'undefined' ? profileCompleteness : 0 %>%; transition: width 0.3s ease;"></div>
+    </div>
+    <ul style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.85rem; list-style: none; padding: 0; margin: 0;">
+      <% if (typeof profileChecks !== 'undefined') { %>
+        <% profileChecks.forEach(chk => { %>
+          <li style="color: <%= chk.done ? 'var(--success)' : '#999' %>; font-weight: 500;">
+            <%= chk.done ? '✓' : '○' %> <%= chk.name %>
+          </li>
+        <% }) %>
+      <% } %>
+    </ul>
+  </div>
+</div>
+
+<div style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid var(--border);">
+  <h2 style="font-size: 1.25rem; font-weight: 700; margin-bottom: 1.5rem;">Quick Actions</h2>
+  <div style="display: flex; gap: 1rem;">
     <a href="/admin/projects/create" class="btn btn-primary">Add New Project</a>
     <a href="/admin/profile" class="btn btn-secondary">Update Profile</a>
   </div>

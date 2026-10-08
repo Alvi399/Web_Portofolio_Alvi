@@ -34,6 +34,7 @@
               <div class="action-group">
                 <a href="/admin/contacts/<%= contact.id %>" class="btn-icon" title="View">👁️</a>
                 <form action="/admin/contacts/<%= contact.id %>/delete" method="POST" onsubmit="return confirm('Delete message?');" style="display:inline;">
+                  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
                   <button type="submit" class="btn-icon btn-icon-danger" title="Delete">🗑️</button>
                 </form>
               </div>

@@ -1,0 +1,63 @@
+<div class="page-header-flex">
+  <h2><%= item ? 'Edit Testimonial' : 'Add New Testimonial' %></h2>
+  <a href="/admin/testimonials" class="btn btn-secondary">Cancel</a>
+</div>
+
+<form action="<%= (item ? '/admin/testimonials/' + item.id : '/admin/testimonials') + '?_csrf=' + csrfToken %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-group">
+        <label for="name">Nama Pemberi Rekomendasi / Testimoni</label>
+        <input type="text" id="name" name="name" value="<%= item ? item.name : '' %>" required class="form-control" placeholder="e.g. John Doe">
+      </div>
+
+      <div class="form-group">
+        <label for="position">Jabatan / Posisi (Position)</label>
+        <input type="text" id="position" name="position" value="<%= item ? (item.position || '') : '' %>" class="form-control" placeholder="e.g. Engineering Manager">
+      </div>
+
+      <div class="form-group">
+        <label for="company">Perusahaan / Institusi (Company)</label>
+        <input type="text" id="company" name="company" value="<%= item ? (item.company || '') : '' %>" class="form-control" placeholder="e.g. TechCorp Indonesia">
+      </div>
+
+      <div class="form-group">
+        <label for="quote">Kutipan / Testimoni (Quote)</label>
+        <textarea id="quote" name="quote" rows="5" required class="form-control" placeholder="Tuliskan testimoni atau umpan balik positif..."><%= item ? (item.quote || '') : '' %></textarea>
+      </div>
+    </div>
+
+    <div class="form-col">
+      <div class="form-group">
+        <label for="image">Foto Pemberi Testimoni (Opsional)</label>
+        <input type="file" id="image" name="image" accept="image/*" class="form-control">
+        <% if (item && item.photo) { %>
+          <div style="margin-top: 10px;">
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Foto Saat Ini:</p>
+            <img src="<%= getImageUrl(item.photo) %>" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 1px solid #ddd;" onerror="handleImageError(this)">
+          </div>
+        <% } %>
+      </div>
+
+      <div class="form-group">
+        <label for="sort_order">Urutan (Sort Order)</label>
+        <input type="number" id="sort_order" name="sort_order" value="<%= item ? item.sort_order : 0 %>" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-container">
+          <input type="checkbox" name="is_visible" <%= item ? (item.is_visible ? 'checked' : '') : 'checked' %>>
+          <span class="checkmark"></span>
+          Tampilkan di Halaman Utama (Visible)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top: 2rem;">
+    <button type="submit" class="btn btn-success"><%= item ? 'Update Testimonial' : 'Save Testimonial' %></button>
+    <a href="/admin/testimonials" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>

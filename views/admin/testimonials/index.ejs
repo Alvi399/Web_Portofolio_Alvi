@@ -1,0 +1,60 @@
+<div class="page-header-flex">
+  <h2>Manage Testimonials</h2>
+  <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+    <a href="/testimonial" target="_blank" class="btn btn-secondary" style="background: #eef2ff; color: #3730a3; border: 1px solid #c7d2fe;">🔗 Public Form Link</a>
+    <a href="/admin/testimonials/create" class="btn btn-primary">➕ Add New Testimonial</a>
+  </div>
+</div>
+
+
+<div class="table-container">
+  <table class="admin-table">
+    <thead>
+      <tr>
+        <th style="width: 50px">Order</th>
+        <th>Photo</th>
+        <th>Name</th>
+        <th>Position &amp; Company</th>
+        <th>Quote</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if (testimonials && testimonials.length > 0) { %>
+        <% testimonials.forEach(item => { %>
+          <tr>
+            <td><%= item.sort_order || 0 %></td>
+            <td>
+              <% if (item.photo) { %>
+                <img src="<%= getImageUrl(item.photo) %>" alt="" class="table-thumb" style="width: 40px; height: 40px; border-radius: 50%; object-fit: cover;" onerror="handleImageError(this)">
+              <% } else { %>
+                <div class="table-thumb-placeholder" style="border-radius:50%;"><%= item.name ? item.name.charAt(0) : '?' %></div>
+              <% } %>
+            </td>
+            <td><strong><%= item.name %></strong></td>
+            <td><%= item.position || '' %> <%= (item.position && item.company) ? 'at' : '' %> <%= item.company || '' %></td>
+            <% const safeQuote = item.quote || ''; %>
+            <td><%= safeQuote.length > 60 ? safeQuote.substring(0, 60) + '...' : safeQuote %></td>
+            <td>
+              <% if (item.is_visible) { %>
+                <span class="badge badge-success">Visible</span>
+              <% } else { %>
+                <span class="badge badge-neutral">Hidden</span>
+              <% } %>
+            </td>
+            <td>
+              <a href="/admin/testimonials/<%= item.id %>/edit" class="btn-icon" title="Edit Testimonial">✏️ Edit</a>
+              <form action="/admin/testimonials/<%= item.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus testimonial ini?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-icon btn-icon-danger" title="Delete Testimonial">🗑️ Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="7" class="text-center">No testimonials found. <a href="/admin/testimonials/create">Add one now</a>.</td></tr>
+      <% } %>
+    </tbody>
+  </table>
+</div>

@@ -1,72 +1,99 @@
-# Professional Portfolio Website
+# Web Portofolio Alvi (Malvix)
 
-Website portfolio modern yang dibangun dengan **Node.js**, **Express**, dan **Sequelize (MySQL)**. Dilengkapi dengan Admin Panel lengkap untuk mengelola konten secara dinamis.
+Website portofolio pribadi & profesional modern yang dibangun menggunakan **Node.js (Express 5)**, **EJS Layouts**, **Sequelize ORM**, dan **MySQL**. Dilengkapi **Admin Panel** terproteksi login, integrasi GitHub REST API, notifikasi pesan kontak, serta keamanan berlapis (SSRF proxy hardening, CSRF token, Rate Limiting, Helmet CSP).
+
+---
 
 ## 🚀 Fitur Utama
 
-### Public Pages
+### 🌐 Public Pages
+- **Hero & Headline**: Role spesifik, status ketersediaan kerja (*Open to Work* / *Freelance*), preferensi lokasi, serta 5 chip teknologi utama.
+- **CV PDF Unduhan (`/resume`)**: HRD dapat mengunduh CV PDF resmi dalam 1 klik.
+- **Featured Projects (`/projects` & `/projects/:slug`)**: Showcase project unggulan dengan narasi bercerita (Masalah, Peran, Dampak, Live Demo, Kode).
+- **Testimoni Neo-Brutalist**: Rekomendasi & kesan dari rekan kerja/klien dalam kartu Neo-Brutalist berdesain kontras tinggi.
+- **Interactive Certifications (`/certificates`)**: Filter sertifikat interaktif sisi klien (Backend, Frontend, AI, Other) & sorotan (*Highlight*).
+- **Journey Timeline (`/journey`)**: Catatan riwayat perjalanan karir dan pendidikan.
+- **Contact Form (`/contact`)**: Formulir kontak anti-spam (Honeypot + Rate Limit) dengan notifikasi email asinkron ke pemilik.
+- **SEO & OpenGraph**: Tag meta OG lengkap, `robots.txt`, `sitemap.xml`, dan JSON-LD `Person`.
 
-- **Home**: Ringkasan profil dan showcase utama.
-- **About**: Informasi detail tentang pemilik portfolio.
-- **Projects**: Daftar project lengkap dengan detail dan kategori slug.
-- **Certificates**: Showcase sertifikat keahlian.
-- **Journey**: Timeline riwayat pendidikan dan pengalaman kerja.
-- **Contact**: Formulir kontak yang terintegrasi dengan database.
+### 🛡️ Keamanan & Performa (Fase 1B Hardening)
+- **SSRF Hardening (`/api/image-proxy`)**: Strict domain whitelist & IP privat/loopback resolution blocking.
+- **CSRF Protection**: Token verifikasi pada semua form POST (termasuk upload multipart).
+- **Rate Limiting & Anti-Spam**: Proteksi brute-force login, submit kontak, dan proxy request (`express-rate-limit`).
+- **Security Headers (`helmet`)**: Dynamic Content Security Policy (CSP) & cookie flags (`HttpOnly; SameSite=Lax`).
+- **Upload Validation**: Magic bytes check untuk gambar (JPEG/PNG/GIF/WebP) & CV (PDF). Ekstensi SVG dilarang.
 
-### Admin Panel (Secured)
+### ⚡ Admin Panel (`/admin`)
+- **Dashboard**: Statistik ringkas (Project, Skill, Pesan, Sertifikat, Journey, Testimoni).
+- **CRUD Content**: Kelola Project (Draft/Published), Skills, Certificates (Highlight), Journey, Testimonials, & Profile.
+- **GitHub Import**: Impor repositori publik langsung dari API GitHub sebagai project draft tanpa duplikasi.
+- **Inbox Messages**: Baca dan kelola pesan kontak yang masuk.
 
-- **Dashboard**: Statistik ringkas konten.
-- **Project Management**: Tambah, edit, hapus project dengan dukungan upload gambar.
-- **GitHub Import**: Import data repository langsung dari GitHub API ke daftar project.
-- **Skill Management**: Kelola daftar keahlian (Frontend, Backend, dll).
-- **Certificate & Journey**: Kelola sertifikat dan riwayat perjalanan karir.
-- **Profile Settings**: Ubah informasi profil dan foto secara real-time.
-- **Contact Inquiries**: Lihat pesan yang masuk dari pengunjung.
+---
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Node.js, Express.js
-- **Database**: MySQL (Sequelize ORM)
-- **View Engine**: EJS (with Express EJS Layouts)
-- **Authentication**: Session-based with BcryptJS
-- **Uploads**: Multer
-- **Integration**: GitHub Rest API
+| Layer | Teknologi |
+|---|---|
+| **Runtime** | Node.js (v18+) |
+| **Framework** | Express 5.x |
+| **View Engine** | EJS 4 + `express-ejs-layouts` |
+| **Database** | MySQL + Sequelize ORM 6 |
+| **Security** | Helmet, CSRF, Express Rate Limit, BcryptJS |
+| **File Upload** | Multer 2 (dengan magic bytes validation) |
+| **Testing** | Jest + Supertest |
 
-## 💻 Instalasi Lokal
+---
 
-1. **Clone project:**
+## 💻 Cara Instalasi & Mengoperasikan
 
-   ```bash
-   git clone https://github.com/USERNAME_ANDA/Web_Portofolio_Alvi.git
-   cd Web_Portofolio_Alvi
-   ```
+### 1. Clone & Install
+```bash
+git clone https://github.com/Alvi399/Web_Portofolio_Alvi.git
+cd Web_Portofolio_Alvi
+npm install
+```
 
-2. **Install dependensi:**
+### 2. Konfigurasi `.env`
+Salin file contoh `.env.example` ke `.env` dan sesuaikan kredensial MySQL lokal Anda:
+```bash
+cp .env.example .env
+```
 
-   ```bash
-   npm install
-   ```
+### 3. Migrasi Database CLI
+Jalankan migrasi Sequelize untuk membuat tabel dan skema database secara idempoten:
+```bash
+npm run migrate
+```
 
-3. **Konfigurasi Environment:**
-   Copy `.env.example` menjadi `.env` dan isi dengan kredensial database lokal Anda:
+*(Opsional) Seed data awal (hanya untuk environment development):*
+```bash
+npm run seed
+```
 
-   ```bash
-   cp .env.example .env
-   ```
+### 4. Jalankan Aplikasi
+- **Development mode:**
+  ```bash
+  npm run dev
+  ```
+- **Production mode:**
+  ```bash
+  npm start
+  ```
 
-4. **Database Migration (Initial):**
-   Aplikasi akan otomatis melakukan syncing tabel saat dijalankan (`sequelize.sync({ alter: true })`).
+Akses website di `http://localhost:3005`.
 
-5. **Jalankan aplikasi:**
-   ```bash
-   npm run dev
-   ```
-   Akses di: `http://localhost:3000`
+---
 
-## 🌐 Hosting & Deployment
+## 🧪 Pengujian Otomatis (Tests)
 
-Project ini dioptimalkan untuk di-deploy ke **VPS (Ubuntu 22.04+)**. Untuk langkah-langkah detail mengenai setup VPS, Nginx Reverse Proxy, SSL (HTTPS), dan Remote Database, silakan lihat panduan yang tersedia di folder dokumentasi atau instruksi sebelumnya.
+Jalankan pengujian integrasi Jest:
+```bash
+npm test
+```
+
+---
 
 ## 📄 Lisensi
 
-[ISC](LICENSE)
+[MIT License](LICENSE) — Copyright (c) 2026 Alvi

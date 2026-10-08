@@ -1,38 +1,6 @@
 <div class="page-header-flex">
   <h2>Manage Journey</h2>
-  <button onclick="toggleAddForm()" class="btn btn-primary">Add New Event</button>
-</div>
-
-<div id="addJourneyForm" class="panel hidden mb-4">
-  <h3>Add New Journey Event</h3>
-  <form action="/admin/journey" method="POST" class="admin-form">
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" name="title" required class="form-control">
-    </div>
-    <div class="form-grid">
-      <div class="form-col">
-        <div class="form-group">
-          <label>Date</label>
-          <input type="date" name="date" required class="form-control">
-        </div>
-      </div>
-      <div class="form-col">
-        <div class="form-group">
-          <label>Image URL (External)</label>
-          <input type="url" name="image_url" placeholder="https://..." class="form-control">
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea name="description" rows="3" class="form-control"></textarea>
-    </div>
-    <div class="form-actions">
-      <button type="submit" class="btn btn-success">Save</button>
-      <button type="button" onclick="toggleAddForm()" class="btn btn-secondary">Cancel</button>
-    </div>
-  </form>
+  <a href="/admin/journey/create" class="btn btn-primary">➕ Add New Event</a>
 </div>
 
 <div class="table-container">
@@ -42,95 +10,46 @@
         <th>Date</th>
         <th>Image</th>
         <th>Title</th>
+        <th>Category</th>
         <th>Description</th>
         <th>Actions</th>
       </tr>
     </thead>
     <tbody>
-      <% if (journeys.length > 0) { %>
+      <% if (journeys && journeys.length > 0) { %>
         <% journeys.forEach(item => { %>
           <tr>
-            <td><%= new Date(item.date).toLocaleDateString() %></td>
             <td>
-              <% if (item.image_url) { %>
-                <img src="<%= getImageUrl(item.image_url) %>" alt="" class="table-thumb" style="width: 50px; height: 50px; object-fit: cover;" onerror="handleImageError(this)">
+              <%= item.date ? new Date(item.date).toLocaleDateString() : '-' %> 
+              <% if (item.is_current) { %>
+                <span class="badge badge-success">Present</span>
+              <% } else if (item.end_date) { %>
+                - <%= new Date(item.end_date).toLocaleDateString() %>
+              <% } %>
+            </td>
+            <td>
+              <% if (item.image) { %>
+                <img src="<%= getImageUrl(item.image) %>" alt="" class="table-thumb" style="width: 50px; height: 50px; object-fit: cover;" onerror="handleImageError(this)">
+              <% } else { %>
+                <span class="text-muted">-</span>
               <% } %>
             </td>
             <td><strong><%= item.title %></strong></td>
-            <td><%= item.description.substring(0, 50) %>...</td>
+            <td><span class="badge badge-<%= item.category === 'education' ? 'info' : 'primary' %>"><%= item.category === 'education' ? 'Education' : 'Experience' %></span></td>
+            <% const safeDesc = item.description || ''; %>
+            <td><%= safeDesc.length > 60 ? safeDesc.substring(0, 60) + '...' : safeDesc %></td>
             <td>
-              <button onclick="editJourney('<%= item.id %>', '<%= item.title %>', '<%= item.date %>', '<%= item.image_url %>')" data-description="<%= item.description %>" class="btn-icon" title="Edit">✏️</button>
-              <form action="/admin/journey/<%= item.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete event?');">
-                <button type="submit" class="btn-icon btn-icon-danger">🗑️</button>
+              <a href="/admin/journey/<%= item.id %>/edit" class="btn-icon" title="Edit Journey Event">✏️ Edit</a>
+              <form action="/admin/journey/<%= item.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data journey ini?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-icon btn-icon-danger" title="Delete Journey Event">🗑️ Delete</button>
               </form>
             </td>
           </tr>
         <% }) %>
       <% } else { %>
-        <tr><td colspan="5" class="text-center">No journey events found.</td></tr>
+        <tr><td colspan="6" class="text-center">No journey events found. <a href="/admin/journey/create">Add one now</a>.</td></tr>
       <% } %>
     </tbody>
   </table>
 </div>
-
-<!-- Edit Modal -->
-<div id="editJourneyForm" class="panel hidden mb-4" style="border-left: 4px solid var(--warning);">
-  <h3>Edit Journey Event</h3>
-  <form id="editForm" action="" method="POST" class="admin-form">
-    <div class="form-group">
-      <label>Title</label>
-      <input type="text" id="edit_title" name="title" required class="form-control">
-    </div>
-    <div class="form-grid">
-      <div class="form-col">
-        <div class="form-group">
-          <label>Date</label>
-          <input type="date" id="edit_date" name="date" required class="form-control">
-        </div>
-      </div>
-      <div class="form-col">
-        <div class="form-group">
-          <label>Image URL</label>
-          <input type="url" id="edit_image_url" name="image_url" class="form-control">
-        </div>
-      </div>
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea id="edit_description" name="description" rows="3" class="form-control"></textarea>
-    </div>
-    <div class="form-actions">
-      <button type="submit" class="btn btn-warning">Update</button>
-      <button type="button" onclick="cancelEdit()" class="btn btn-secondary">Cancel</button>
-    </div>
-  </form>
-</div>
-
-<script>
-function toggleAddForm() {
-  document.getElementById('addJourneyForm').classList.toggle('hidden');
-  document.getElementById('editJourneyForm').classList.add('hidden');
-}
-
-function editJourney(id, title, date, imgUrl) {
-  // Description is passed via data attribute to avoid quote escaping issues in arguments
-  const btn = event.currentTarget;
-  const description = btn.getAttribute('data-description');
-
-  document.getElementById('addJourneyForm').classList.add('hidden');
-  const editPanel = document.getElementById('editJourneyForm');
-  editPanel.classList.remove('hidden');
-  
-  document.getElementById('editForm').action = '/admin/journey/' + id;
-  document.getElementById('edit_title').value = title;
-  document.getElementById('edit_date').value = date;
-  document.getElementById('edit_image_url').value = imgUrl;
-  document.getElementById('edit_description').value = description;
-  
-  editPanel.scrollIntoView({ behavior: 'smooth' });
-}
-
-function cancelEdit() {
-  document.getElementById('editJourneyForm').classList.add('hidden');
-}
-</script>

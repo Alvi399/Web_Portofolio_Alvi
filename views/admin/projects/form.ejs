@@ -3,7 +3,8 @@
   <a href="/admin/projects" class="btn btn-secondary">Cancel</a>
 </div>
 
-<form action="<%= project ? '/admin/projects/' + project.id : '/admin/projects' %>" method="POST" enctype="multipart/form-data" class="admin-form">
+<form action="<%= (project ? '/admin/projects/' + project.id : '/admin/projects') + '?_csrf=' + csrfToken %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="form-grid">
     <div class="form-col">
       <div class="form-group">
@@ -17,13 +18,73 @@
       </div>
 
       <div class="form-group">
-        <label for="technologies">Technologies (comma separated)</label>
-        <input type="text" id="technologies" name="technologies" value="<%= project && project.technologies && Array.isArray(project.technologies) ? project.technologies.join(', ') : '' %>" placeholder="React, Node.js, MySQL" class="form-control">
+        <label>Technologies (Pilih dari Skill)</label>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr)); gap: 0.5rem; background: #f9fafb; padding: 1rem; border-radius: 6px; border: 1px solid var(--border); max-height: 200px; overflow-y: auto;">
+          <% if (typeof skills !== 'undefined' && skills.length > 0) { %>
+            <% skills.forEach(skill => { %>
+              <label style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.9rem; margin: 0; cursor: pointer;">
+                <input type="checkbox" name="technologies[]" value="<%= skill.name %>" <%= project && project.technologies && project.technologies.includes(skill.name) ? 'checked' : '' %>>
+                <%= skill.name %>
+              </label>
+            <% }) %>
+          <% } else { %>
+            <p style="color: #64748b; grid-column: 1 / -1; margin: 0;">Belum ada skill. Silakan <a href="/admin/skills">tambah skill</a> terlebih dahulu.</p>
+          <% } %>
+        </div>
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label for="project_url">Project URL</label>
+          <label for="status">Status Publikasi</label>
+          <select id="status" name="status" class="form-control">
+            <option value="published" <%= project && project.status === 'published' ? 'selected' : (!project ? 'selected' : '') %>>Published (Tampil di publik)</option>
+            <option value="draft" <%= project && project.status === 'draft' ? 'selected' : '' %>>Draft (Sembunyikan dari publik)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="role">Peran Saya (Role)</label>
+          <input type="text" id="role" name="role" value="<%= project ? (project.role || '') : '' %>" placeholder="Full Stack Developer / Lead Backend" class="form-control">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="problem">Masalah yang Diselesaikan (Problem)</label>
+        <textarea id="problem" name="problem" rows="3" placeholder="Tantangan atau masalah utama yang melatarbelakangi project ini..." class="form-control"><%= project ? (project.problem || '') : '' %></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="impact">Dampak / Hasil (Impact)</label>
+        <textarea id="impact" name="impact" rows="3" placeholder="Hasil nyata, performa, jumlah penggguna, atau pencapaian..." class="form-control"><%= project ? (project.impact || '') : '' %></textarea>
+      </div>
+
+      <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
+      <h3 style="margin-bottom: 1rem; color: #38bdf8;">🌐 English Translation (Optional)</h3>
+      
+      <div class="form-group">
+        <label for="role_en">Role (EN)</label>
+        <input type="text" id="role_en" name="role_en" value="<%= project ? (project.role_en || '') : '' %>" placeholder="Lead Backend Developer" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="description_en">Description (EN)</label>
+        <textarea id="description_en" name="description_en" rows="3" class="form-control"><%= project ? (project.description_en || '') : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="problem_en">Problem (EN)</label>
+        <textarea id="problem_en" name="problem_en" rows="2" class="form-control"><%= project ? (project.problem_en || '') : '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="impact_en">Impact (EN)</label>
+        <textarea id="impact_en" name="impact_en" rows="2" class="form-control"><%= project ? (project.impact_en || '') : '' %></textarea>
+      </div>
+      <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label for="demo_url">Live Demo URL</label>
+          <input type="url" id="demo_url" name="demo_url" value="<%= project ? (project.demo_url || '') : '' %>" placeholder="https://demo.example.com" class="form-control">
+        </div>
+        <div class="form-group">
+          <label for="project_url">Project / Homepage URL</label>
           <input type="url" id="project_url" name="project_url" value="<%= project ? project.project_url : '' %>" placeholder="https://example.com" class="form-control">
         </div>
         <div class="form-group">
@@ -36,20 +97,15 @@
     <div class="form-col">
       <div class="form-group">
         <label>Project Image</label>
-        <div class="image-preview-container">
-          <% if (project && (project.image_url || project.image)) { %>
-            <img src="<%= project.image_url || project.image %>" alt="Preview" class="image-preview">
+        <div class="image-preview-container" style="margin-bottom: 1rem;">
+          <% if (project && project.image) { %>
+            <img src="<%= project.image %>" alt="Preview" class="image-preview" style="max-width: 100%; border-radius: 6px;">
           <% } %>
         </div>
-        <div class="mb-2">
-          <label for="image_url" class="small text-muted">External Image URL</label>
-          <input type="url" id="image_url" name="image_url" value="<%= project ? project.image_url : '' %>" placeholder="https://..." class="form-control">
-        </div>
         <div>
-          <label class="small text-muted">Or Upload Local Image</label>
-          <input type="file" name="image" class="form-control file-input">
+          <label class="small text-muted" style="display:block; margin-bottom: 0.5rem;">Upload Image</label>
+          <input type="file" name="image" class="form-control file-input" accept="image/*">
         </div>
-        <small class="text-muted">External URL takes precedence over local upload</small>
       </div>
 
       <div class="form-group">

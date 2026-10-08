@@ -7,10 +7,14 @@ const Certificate = sequelize.define('Certificate', {
   issuer: { type: DataTypes.STRING, allowNull: false },
   date: { type: DataTypes.DATEONLY, allowNull: false },
   credential_url: { type: DataTypes.STRING, defaultValue: '' },
-  image_url: { type: DataTypes.STRING, defaultValue: '' },
+  image: { type: DataTypes.STRING, defaultValue: '' },
   category: { 
-    type: DataTypes.ENUM('Backend', 'Frontend', 'AI', 'Other'),
+    type: DataTypes.STRING,
     defaultValue: 'Other'
+  },
+  is_highlight: {
+    type: DataTypes.BOOLEAN,
+    defaultValue: false
   }
 }, { tableName: 'certificates', timestamps: true });
 

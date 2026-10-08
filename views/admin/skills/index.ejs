@@ -1,41 +1,13 @@
 <div class="page-header-flex">
   <h2>Manage Skills</h2>
-  <button onclick="toggleAddForm()" class="btn btn-primary">Add New Skill</button>
-</div>
-
-<div id="addSkillForm" class="panel hidden mb-4">
-  <h3>Add New Skill</h3>
-  <form action="/admin/skills" method="POST" class="inline-form">
-    <div class="form-group">
-      <input type="text" name="name" placeholder="Skill Name (e.g. React)" required class="form-control">
-    </div>
-    <div class="form-group">
-      <select name="category" class="form-control">
-        <option value="Frontend">Frontend</option>
-        <option value="Backend">Backend</option>
-        <option value="Database">Database</option>
-        <option value="Tools">Tools</option>
-        <option value="Other">Other</option>
-      </select>
-    </div>
-    <div class="form-group">
-      <input type="number" name="proficiency" placeholder="0-100" min="0" max="100" class="form-control">
-    </div>
-    <div class="form-group">
-      <input type="text" name="icon" placeholder="Emoji/Icon" class="form-control">
-    </div>
-    <div class="form-group">
-      <input type="url" name="image_url" placeholder="Image URL (optional)" class="form-control">
-    </div>
-    <button type="submit" class="btn btn-success">Save</button>
-    <button type="button" onclick="toggleAddForm()" class="btn btn-secondary">Cancel</button>
-  </form>
+  <a href="/admin/skills/create" class="btn btn-primary">➕ Add New Skill</a>
 </div>
 
 <div class="table-container">
   <table class="admin-table">
     <thead>
       <tr>
+        <th style="width: 50px">Order</th>
         <th>Category</th>
         <th>Icon</th>
         <th>Name</th>
@@ -43,38 +15,35 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
-      <% skills.forEach(skill => { %>
-        <tr>
-          <td><span class="badge badge-info"><%= skill.category %></span></td>
-          <td>
-            <% if (skill.image_url) { %>
-              <img src="<%= getImageUrl(skill.image_url) %>" alt="<%= skill.name %>" style="width: 24px; height: 24px; object-fit: contain;" onerror="handleImageError(this)">
-            <% } else { %>
-              <%= skill.icon %>
-            <% } %>
-          </td>
-          <td><strong><%= skill.name %></strong></td>
-          <td>
-            <div class="progress-bar-mini">
-              <% const widthStyle = `width: ${skill.proficiency}%;`; %>
-              <div class="progress-fill" style="<%= widthStyle %>"></div>
-            </div>
-            <small><%= skill.proficiency %>%</small>
-          </td>
-          <td>
-            <form action="/admin/skills/<%= skill.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Delete skill?');">
-              <button type="submit" class="btn-icon btn-icon-danger">🗑️</button>
-            </form>
-          </td>
-        </tr>
-      <% }) %>
+    <tbody class="sortable-tbody" data-reorder-route="/admin/skills/reorder">
+      <% if (skills && skills.length > 0) { %>
+        <% skills.forEach(skill => { %>
+          <tr data-id="<%= skill.id %>">
+            <td style="cursor: grab;" class="drag-handle" title="Drag to reorder">
+              ☰ <span class="order-number"><%= skill.sort_order || 0 %></span>
+            </td>
+            <td><span class="badge badge-info"><%= skill.category %></span></td>
+            <td>
+              <% if (skill.image) { %>
+                <img src="<%= getImageUrl(skill.image) %>" alt="<%= skill.name %>" style="width: 24px; height: 24px; object-fit: contain;" onerror="handleImageError(this)">
+              <% } else { %>
+                <%= skill.icon || '⚡' %>
+              <% } %>
+            </td>
+            <td><strong><%= skill.name %></strong></td>
+            <td><%= skill.proficiency %>%</td>
+            <td>
+              <a href="/admin/skills/<%= skill.id %>/edit" class="btn-icon" title="Edit Skill">✏️ Edit</a>
+              <form action="/admin/skills/<%= skill.id %>/delete" method="POST" style="display:inline;" onsubmit="return confirm('Apakah Anda yakin ingin menghapus skill ini?');">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <button type="submit" class="btn-icon btn-icon-danger" title="Delete Skill">🗑️ Delete</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      <% } else { %>
+        <tr><td colspan="6" class="text-center">No skills found. <a href="/admin/skills/create">Add one now</a>.</td></tr>
+      <% } %>
     </tbody>
   </table>
 </div>
-
-<script>
-function toggleAddForm() {
-  document.getElementById('addSkillForm').classList.toggle('hidden');
-}
-</script>

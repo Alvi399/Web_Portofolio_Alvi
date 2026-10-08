@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="<%= cv.lang %>">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>CV <%= cv.name ? '- ' + cv.name : '' %></title>
+  <style>
+    :root { --ink: #111; --muted: #444; --line: #bbb; --accent: #0b5cad; --bg: #eceae5; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: Arial, Helvetica, sans-serif; line-height: 1.45; }
+    .layout { display: flex; gap: 1.5rem; align-items: flex-start; justify-content: center; padding: 1.5rem; flex-wrap: wrap; }
+
+    /* The CV itself: one column, text only, standard headings (ATS safe) */
+    .cv { background: #fff; width: 210mm; max-width: 100%; min-height: 297mm; padding: 16mm 17mm; box-shadow: 0 1px 6px rgba(0,0,0,.18); font-size: 10.5pt; }
+    .cv h1 { font-size: 20pt; margin: 0 0 2pt; letter-spacing: .5pt; }
+    .cv .headline { font-size: 11.5pt; color: var(--muted); margin: 0 0 6pt; }
+    .cv .contact { font-size: 10pt; color: var(--ink); margin: 0; }
+    .cv h2 { font-size: 11pt; text-transform: uppercase; letter-spacing: 1pt; border-bottom: 1px solid var(--ink); padding-bottom: 2pt; margin: 14pt 0 6pt; }
+    .cv p { margin: 0 0 4pt; }
+    .cv ul { margin: 2pt 0 6pt; padding-left: 14pt; }
+    .cv li { margin-bottom: 2pt; }
+    .item { margin-bottom: 8pt; break-inside: avoid; }
+    .item-head { font-weight: 700; }
+    .item-sub { color: var(--muted); font-size: 10pt; }
+    .skills-row { margin: 0 0 3pt; }
+
+    /* Screen-only side panel */
+    .panel { width: 330px; max-width: 100%; background: #fff; padding: 1.1rem; box-shadow: 0 1px 6px rgba(0,0,0,.18); position: sticky; top: 1rem; font-size: 14px; }
+    .panel h2 { font-size: 15px; margin: 0 0 .6rem; }
+    .btn { display: block; width: 100%; padding: .6rem .8rem; margin: 0 0 .5rem; border: 1px solid var(--ink); background: #fff; color: var(--ink); font: inherit; font-weight: 700; text-align: center; text-decoration: none; cursor: pointer; }
+    .btn.primary { background: var(--ink); color: #fff; }
+    .btn:focus-visible, a:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .score { display: flex; align-items: baseline; gap: .5rem; margin: 1rem 0 .3rem; }
+    .score strong { font-size: 40px; line-height: 1; }
+    .score span { color: var(--muted); }
+    .meter { height: 8px; background: #ddd; margin-bottom: .6rem; }
+    .meter i { display: block; height: 100%; background: var(--accent); }
+    .note { color: var(--muted); font-size: 12px; margin: 0 0 .8rem; }
+    .checks { list-style: none; margin: 0; padding: 0; }
+    .checks li { padding: .4rem 0; border-top: 1px solid #e3e3e3; }
+    .checks .ok { color: #1a6b2f; font-weight: 700; }
+    .checks .todo { color: #9a3b00; font-weight: 700; }
+    .checks small { display: block; color: var(--muted); margin-top: 2px; }
+    .lang a { color: var(--accent); }
+
+    @media (max-width: 760px) { .cv { padding: 10mm 8mm; min-height: 0; } .panel { position: static; width: 100%; } }
+    @page { size: A4; margin: 12mm; }
+    @media print {
+      body { background: #fff; }
+      .layout { display: block; padding: 0; }
+      .panel { display: none; }
+      .cv { width: auto; min-height: 0; padding: 0; box-shadow: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <main class="cv" id="cv">
+      <header>
+        <h1><%= cv.name %></h1>
+        <% if (cv.headline) { %><p class="headline"><%= cv.headline %></p><% } %>
+        <% const contactLine = [cv.contact.email, cv.contact.phone, cv.contact.location].filter(Boolean).join(' | '); %>
+        <% if (contactLine) { %><p class="contact"><%= contactLine %></p><% } %>
+        <% const linkLine = [cv.contact.linkedin, cv.contact.github].filter(Boolean).join(' | '); %>
+        <% if (linkLine) { %><p class="contact"><%= linkLine %></p><% } %>
+      </header>
+
+      <% if (cv.summary) { %>
+        <section>
+          <h2><%= cv.labels.summary %></h2>
+          <p><%= cv.summary %></p>
+        </section>
+      <% } %>
+
+      <% if (Object.keys(cv.skillGroups).length) { %>
+        <section>
+          <h2><%= cv.labels.skills %></h2>
+          <% Object.keys(cv.skillGroups).forEach(cat => { %>
+            <p class="skills-row"><strong><%= cat %>:</strong> <%= cv.skillGroups[cat].join(', ') %></p>
+          <% }) %>
+        </section>
+      <% } %>
+
+      <% if (cv.projects.length) { %>
+        <section>
+          <h2><%= cv.labels.projects %></h2>
+          <% cv.projects.forEach(p => { %>
+            <div class="item">
+              <div class="item-head"><%= p.title %><% if (p.role) { %> | <%= p.role %><% } %></div>
+              <ul style="margin-top: 4px;">
+                <% if (p.stack.length) { %><li><strong><%= cv.labels.stack %>:</strong> <%= p.stack.join(', ') %></li><% } %>
+                <% p.bullets.forEach(b => { %><li><%= b %></li><% }) %>
+                <% if (p.repo) { %><li><strong><%= cv.labels.repo %>:</strong> <%= p.repo %></li><% } %>
+                <% if (p.demo) { %><li><strong><%= cv.labels.demo %>:</strong> <%= p.demo %></li><% } %>
+              </ul>
+            </div>
+          <% }) %>
+        </section>
+      <% } %>
+
+      <% if (cv.experience.length) { %>
+        <section>
+          <h2><%= cv.labels.experience %></h2>
+          <% cv.experience.forEach(e => { %>
+            <div class="item">
+              <div class="item-head"><%= e.title %><% if (e.date) { %> | <%= e.date %><% } %></div>
+              <% if (e.bullets.length) { %>
+                <ul><% e.bullets.forEach(b => { %><li><%= b %></li><% }) %></ul>
+              <% } %>
+            </div>
+          <% }) %>
+        </section>
+      <% } %>
+
+      <% if (cv.education && cv.education.length) { %>
+        <section>
+          <h2><%= cv.labels.education %></h2>
+          <% cv.education.forEach(e => { %>
+            <div class="item">
+              <div class="item-head"><%= e.title %><% if (e.date) { %> | <%= e.date %><% } %></div>
+              <% if (e.bullets.length) { %>
+                <ul><% e.bullets.forEach(b => { %><li><%= b %></li><% }) %></ul>
+              <% } %>
+            </div>
+          <% }) %>
+        </section>
+      <% } %>
+
+      <% if (cv.certifications.length) { %>
+        <section>
+          <h2><%= cv.labels.certifications %></h2>
+          <ul>
+            <% cv.certifications.forEach(x => { %>
+              <li><%= [x.title, x.issuer, x.year].filter(Boolean).join(', ') %><% if (x.url) { %> (<%= cv.labels.verify %>: <%= x.url %>)<% } %></li>
+            <% }) %>
+          </ul>
+        </section>
+      <% } %>
+    </main>
+
+    <aside class="panel" aria-label="ATS tools">
+      <h2><%= cv.lang === 'id' ? 'Unduh CV' : 'Get your CV' %></h2>
+      <button type="button" class="btn primary" id="printBtn"><%= cv.lang === 'id' ? 'Simpan sebagai PDF (cetak)' : 'Save as PDF (print)' %></button>
+      <a class="btn" href="/cv.txt?lang=<%= cv.lang %>" id="txtBtn"><%= cv.lang === 'id' ? 'Unduh TXT (paling aman untuk ATS)' : 'Download TXT (safest for ATS)' %></a>
+      <a class="btn" href="/"><%= cv.lang === 'id' ? 'Kembali ke portofolio' : 'Back to portfolio' %></a>
+      <p class="note lang">
+        <%= cv.lang === 'id' ? 'Bahasa' : 'Language' %>:
+        <a href="/cv?lang=id">Indonesia</a> | <a href="/cv?lang=en">English</a>
+      </p>
+
+      <div class="score" aria-live="polite">
+        <strong><%= score.value %></strong><span>/ 100 <%= cv.lang === 'id' ? 'skor kesiapan ATS' : 'ATS readiness' %></span>
+      </div>
+      <div class="meter" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="<%= score.value %>"><i data-w="<%= score.value %>"></i></div>
+      <p class="note">
+        <%= cv.lang === 'id'
+          ? 'Skor ini perkiraan berbasis kelengkapan dan kualitas isi data portofolio, bukan skor resmi dari vendor ATS. Format (satu kolom, tanpa gambar/tabel/ikon, heading standar, teks bisa diseleksi) sudah dijamin oleh templat.'
+          : 'This is an estimate based on the completeness and quality of your portfolio data, not an official vendor ATS score. Format (single column, no images/tables/icons, standard headings, selectable text) is guaranteed by the template.' %>
+      </p>
+      <ul class="checks">
+        <% score.checks.forEach(ch => { %>
+          <li>
+            <span class="<%= ch.ok ? 'ok' : 'todo' %>"><%= ch.ok ? 'OK' : (cv.lang === 'id' ? 'Perlu' : 'To do') %></span>
+            <%= ch.key %> (<%= ch.got %>/<%= ch.max %>)
+            <% if (!ch.ok) { %><small><%= ch.tip %></small><% } %>
+          </li>
+        <% }) %>
+      </ul>
+    </aside>
+  </div>
+
+  <script>
+    document.getElementById('printBtn').addEventListener('click', function () { window.print(); });
+    document.querySelectorAll('.meter i').forEach(function (el) { el.style.width = el.getAttribute('data-w') + '%'; });
+  </script>
+</body>
+</html>

@@ -23,6 +23,7 @@
     %>
     <a href="<%= mailtoLink %>" class="btn btn-primary">Reply via Email</a>
     <form action="/admin/contacts/<%= contact.id %>/delete" method="POST" onsubmit="return confirm('Delete message?');" style="display:inline;">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <button type="submit" class="btn btn-danger">Delete Message</button>
     </form>
   </div>

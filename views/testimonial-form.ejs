@@ -1,0 +1,171 @@
+<% const _p = (typeof profile !== 'undefined' && profile) ? profile : {}; %>
+<% const _old = (typeof old !== 'undefined' && old) ? old : {}; %>
+<% const _fe = (typeof fieldErrors !== 'undefined' && fieldErrors) ? fieldErrors : {}; %>
+
+<header class="page-head">
+  <div class="container animate-on-scroll">
+    <div style="display: inline-block; background: var(--accent); color: var(--ink); padding: 0.25rem 0.75rem; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; text-transform: uppercase; margin-bottom: 0.75rem; border: var(--line);">
+      💬 Feedback &amp; Recommendation
+    </div>
+    <h1 class="page-title"><%= t('Formulir Testimoni & Rekomendasi', 'Testimonial & Recommendation Form') %></h1>
+    <p class="page-subtitle">
+      <%= typeof lang !== 'undefined' && lang === 'en' 
+        ? 'Did you mentor, manage, or work with Alvi? Leave your feedback and recommendation below.' 
+        : 'Pernah bekerja, membimbing, atau berkolaborasi dengan Alvi? Berikan ulasan & rekomendasi Anda di bawah ini.' %>
+    </p>
+  </div>
+</header>
+
+<section class="section">
+  <div class="container">
+    <div class="contact-grid">
+      <!-- Left Info Box -->
+      <div class="contact-text animate-on-scroll">
+        <div style="background: var(--surface); border: var(--line); box-shadow: var(--shadow); padding: 1.5rem; margin-bottom: 1.5rem;">
+          <h3 style="font-size: 1.2rem; font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+            <span>✨</span> <%= t('Tentang Form Ini', 'About This Form') %>
+          </h3>
+          <p style="color: var(--ink-2); line-height: 1.6; font-size: 0.95rem; margin-bottom: 1rem;">
+            <%= t(
+              'Formulir ini khusus dibuat agar Pembimbing Magang, Atasan, Rekan Kerja, maupun Klien dapat memberikan ulasan & rekomendasi profesional secara langsung.',
+              'This form is designed for Internship Mentors, Managers, Colleagues, and Clients to submit direct professional recommendations.'
+            ) %>
+          </p>
+
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.75rem; font-size: 0.9rem;">
+            <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+              <span style="color: var(--accent-2); font-weight: bold;">✓</span>
+              <span><strong><%= t('Langsung Terintegrasi', 'Direct Integration') %>:</strong> <%= t('Testimoni yang Anda kirim akan langsung tampil di halaman depan portofolio.', 'Your review will be integrated into the portfolio homepage.') %></span>
+            </li>
+            <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+              <span style="color: var(--accent-2); font-weight: bold;">✓</span>
+              <span><strong><%= t('Foto / Avatar Opsional', 'Optional Avatar') %>:</strong> <%= t('Anda dapat mengunggah foto profil profesional atau menggunakan avatar default.', 'Upload a professional profile picture or use the default avatar.') %></span>
+            </li>
+            <li style="display: flex; gap: 0.6rem; align-items: flex-start;">
+              <span style="color: var(--accent-2); font-weight: bold;">✓</span>
+              <span><strong><%= t('Dapat Diperbarui', 'Manageable') %>:</strong> <%= t('Admin dapat mengedit atau mengatur tata letak testimoni sewaktu-waktu.', 'Admin can manage and reorder testimonials at any time.') %></span>
+            </li>
+          </ul>
+        </div>
+
+        <div style="border: var(--line); padding: 1.25rem; background: var(--paper);">
+          <div style="font-family: var(--font-mono); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-2); margin-bottom: 0.4rem;">
+            Target Portfolio Owner
+          </div>
+          <div style="font-weight: 800; font-size: 1.1rem; color: var(--ink);"><%= _p.full_name || 'Muhammad Alvi Kirana Zulfan Nazal' %></div>
+          <div style="font-size: 0.9rem; color: var(--ink-2); margin-top: 0.2rem;"><%= _p.headline || 'Full Stack Software Engineer & Backend Specialist' %></div>
+        </div>
+      </div>
+
+      <!-- Right Form Wrapper -->
+      <div class="contact-form-wrapper animate-on-scroll">
+        <% if (typeof success !== 'undefined' && success) { %>
+          <div style="border: var(--line); background: #d4edda; color: #155724; padding: 1.5rem; margin-bottom: 1.5rem; box-shadow: var(--shadow);">
+            <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+              <span>🎉</span> <%= t('Terima Kasih Banyak!', 'Thank You Very Much!') %>
+            </h3>
+            <p style="margin-bottom: 1rem; line-height: 1.5;"><%= success %></p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+              <a href="/" class="btn btn-sm" style="background: var(--ink); color: var(--paper); text-decoration: none;"><%= t('Lihat di Halaman Beranda', 'View on Homepage') %> &rarr;</a>
+              <a href="/testimonial" class="btn btn-sm" style="background: var(--paper); border: var(--line); text-decoration: none;"><%= t('Kirim Testimoni Lain', 'Submit Another Testimonial') %></a>
+            </div>
+          </div>
+        <% } %>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-error" role="alert"><%= error %></div>
+        <% } %>
+
+        <div class="form-panel">
+          <form action="/testimonial?_csrf=<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>" method="POST" enctype="multipart/form-data" novalidate>
+            <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+
+            
+            <!-- Honeypot -->
+            <div class="hp" aria-hidden="true">
+              <label for="website">Website</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <!-- Full Name -->
+            <div class="form-group">
+              <label for="name"><%= t('Nama Lengkap & Gelar', 'Full Name & Title') %> <span style="color:var(--bad-text);">*</span></label>
+              <input type="text" id="name" name="name" class="form-control" required maxlength="100" placeholder="<%= t('contoh: Dr. Budi Santoso, M.Kom', 'e.g. Budi Santoso, M.Kom') %>" value="<%= _old.name || '' %>">
+              <% if (_fe.name) { %><small class="field-error"><%= _fe.name %></small><% } %>
+            </div>
+
+            <!-- Position & Relationship Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.2rem;">
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="position"><%= t('Jabatan / Role Anda', 'Your Position / Role') %></label>
+                <input type="text" id="position" name="position" class="form-control" maxlength="100" placeholder="<%= t('contoh: Senior Tech Lead', 'e.g. Senior Engineering Manager') %>" value="<%= _old.position || '' %>">
+              </div>
+
+              <div class="form-group" style="margin-bottom: 0;">
+                <label for="relationship"><%= t('Hubungan Kerja', 'Work Relationship') %></label>
+                <select id="relationship" name="relationship" class="form-control" style="cursor: pointer;">
+                  <option value=""><%= t('-- Pilih Hubungan --', '-- Select Relationship --') %></option>
+                  <option value="Mentor Magang" <%= _old.relationship === 'Mentor Magang' ? 'selected' : '' %>><%= t('Mentor / Pembimbing Magang', 'Internship Mentor') %></option>
+                  <option value="Atasan Direct" <%= _old.relationship === 'Atasan Direct' ? 'selected' : '' %>><%= t('Atasan Direct / Supervisor', 'Direct Manager / Supervisor') %></option>
+                  <option value="Rekan Kerja" <%= _old.relationship === 'Rekan Kerja' ? 'selected' : '' %>><%= t('Rekan Kerja / Team Member', 'Colleague / Team Member') %></option>
+                  <option value="Klien" <%= _old.relationship === 'Klien' ? 'selected' : '' %>><%= t('Klien / Client', 'Client / Project Owner') %></option>
+                  <option value="Dosen/Akademisi" <%= _old.relationship === 'Dosen/Akademisi' ? 'selected' : '' %>><%= t('Dosen / Akademisi', 'Lecturer / Professor') %></option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Company -->
+            <div class="form-group">
+              <label for="company"><%= t('Perusahaan / Instansi / Organisasi', 'Company / Organization') %></label>
+              <input type="text" id="company" name="company" class="form-control" maxlength="100" placeholder="<%= t('contoh: PT Telkom Indonesia / Startup Digital', 'e.g. PT Telkom Indonesia') %>" value="<%= _old.company || '' %>">
+            </div>
+
+            <!-- Photo Upload -->
+            <div class="form-group">
+              <label for="photo"><%= t('Foto Profil / Avatar', 'Profile Photo / Avatar') %> <span style="font-weight:normal; color:var(--ink-2); font-size:0.85rem;">(<%= t('Opsional, maks 5 MB', 'Optional, max 5 MB') %>)</span></label>
+              <input type="file" id="photo" name="photo" class="form-control" accept="image/jpeg,image/png,image/gif,image/webp" onchange="previewAvatar(this)">
+              <div id="avatarPreviewContainer" style="display: none; margin-top: 0.75rem; align-items: center; gap: 0.75rem;">
+                <img id="avatarPreview" src="#" alt="Preview" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover; border: var(--line);">
+                <span style="font-size: 0.85rem; color: var(--ink-2); font-family: var(--font-mono);"><%= t('Foto siap diunggah', 'Photo ready to upload') %></span>
+              </div>
+            </div>
+
+            <!-- Quote / Recommendation -->
+            <div class="form-group">
+              <label for="quote"><%= t('Kata Testimoni & Rekomendasi', 'Testimonial & Recommendation') %> <span style="color:var(--bad-text);">*</span></label>
+              <textarea id="quote" name="quote" class="form-control" required style="min-height: 10rem;" placeholder="<%= t('Tuliskan ulasan, kesan, etos kerja, atau rekomendasi profesional Anda untuk Alvi...', 'Write your review, impression, work ethic, or professional recommendation for Alvi...') %>"><%= _old.quote || '' %></textarea>
+              <% if (_fe.quote) { %><small class="field-error"><%= _fe.quote %></small><% } %>
+              <div style="display: flex; justify-content: space-between; margin-top: 0.35rem; font-size: 0.8rem; color: var(--ink-2); font-family: var(--font-mono);">
+                <span><%= t('Tips: Tulis secara singkat & padat (2-4 kalimat)', 'Tip: Keep it concise & impactful (2-4 sentences)') %></span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div style="margin-top: 1.5rem;">
+              <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; font-size: 1.05rem; padding: 0.85rem 1.5rem; background: var(--ink); color: var(--paper); border: var(--line); cursor: pointer; box-shadow: var(--shadow);">
+                🚀 <%= t('Kirim Testimoni & Rekomendasi', 'Submit Testimonial & Recommendation') %>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  function previewAvatar(input) {
+    const container = document.getElementById('avatarPreviewContainer');
+    const img = document.getElementById('avatarPreview');
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        img.src = e.target.result;
+        container.style.display = 'flex';
+      }
+      reader.readAsDataURL(input.files[0]);
+    } else {
+      container.style.display = 'none';
+    }
+  }
+</script>

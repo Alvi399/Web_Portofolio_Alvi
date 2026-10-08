@@ -1,206 +1,37 @@
-<div class="page-header">
-  <div class="container animate-on-scroll fade-up">
-    <h1 class="page-title">My Journey</h1>
+<header class="page-head">
+  <div class="container animate-on-scroll">
+    <h1 class="page-title"><%= t('Perjalanan Karir', 'My Journey') %></h1>
     <p class="page-subtitle">A timeline of my professional and personal growth</p>
   </div>
-</div>
+</header>
 
-<section class="section timeline-section">
+<section class="section">
   <div class="container">
-    <div class="timeline">
+    <div class="tl animate-on-scroll">
       <% if (typeof journeys !== 'undefined' && journeys.length > 0) { %>
         <% journeys.forEach((item, index) => { %>
-          <div class="timeline-item <%= index % 2 === 0 ? 'timeline-left' : 'timeline-right' %> animate-on-scroll <%= index % 2 === 0 ? 'fade-right' : 'fade-left' %>">
-            <div class="timeline-content" 
-                 data-id="<%= item.id %>"
-                 data-title="<%= item.title %>"
-                 data-date="<%= item.date %>"
-                 data-image="<%= item.image_url || '' %>"
-                 data-description="<%= item.description %>"
-                 onclick="openJourneyModal(this)">
-              <span class="timeline-date"><%= new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' }) %></span>
-              <% if (item.image_url) { %>
-                <img src="<%= getImageUrl(item.image_url) %>" alt="<%= item.title %>" class="timeline-img" onerror="handleImageError(this)">
-              <% } %>
-              <h3 class="timeline-title"><%= item.title %></h3>
-              <p class="timeline-desc">
-                <%= item.description.length > 100 ? item.description.substring(0, 100) + '...' : item.description %>
-              </p>
-              <% if (item.description.length > 100) { %>
-                <span class="read-more">Read More</span>
+          <div class="tl-item">
+            <div class="tl-date">
+              <% const lang = typeof _lang !== 'undefined' ? _lang : 'en'; %>
+              <% const sD = new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }); %>
+              <% const eD = item.is_current ? (lang === 'id' ? 'Sekarang' : 'Present') : (item.end_date ? new Date(item.end_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }) : ''); %>
+              <%= eD ? `${sD} - ${eD}` : sD %>
+            </div>
+            <div class="tl-content">
+              <h3 class="tl-title"><%= tField(item, 'title') || item.title %></h3>
+              <p class="tl-body"><%= tField(item, 'description') || item.description %></p>
+              
+              <% if (item.image) { %>
+                <img src="<%= getImageUrl(item.image) %>" alt="<%= item.title %>" class="tl-img" onerror="handleImageError(this)">
               <% } %>
             </div>
           </div>
         <% }) %>
       <% } else { %>
-        <p class="text-center text-muted">Journey details coming soon...</p>
+        <div class="empty">
+          <p>Journey details coming soon...</p>
+        </div>
       <% } %>
     </div>
   </div>
 </section>
-
-<!-- Journey Modal -->
-<div id="journeyModal" class="modal hidden">
-  <div class="modal-content">
-    <span class="close-modal" onclick="closeJourneyModal()">&times;</span>
-    <div class="modal-body">
-      <h2 id="modalTitle" class="modal-title"></h2>
-      <span id="modalDate" class="modal-date-badge"></span>
-      <img id="modalImage" src="" alt="Event Image" class="modal-image hidden">
-      <div id="modalDescription" class="modal-description"></div>
-    </div>
-  </div>
-</div>
-
-<style>
-/* Modal Styles */
-.modal {
-  display: none; 
-  position: fixed; 
-  z-index: 2000; 
-  left: 0;
-  top: 0;
-  width: 100%; 
-  height: 100%; 
-  overflow: auto; 
-  background-color: rgba(0,0,0,0.8); 
-  backdrop-filter: blur(5px);
-  animation: fadeIn 0.3s;
-}
-
-.modal.show {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.modal-content {
-  background-color: var(--card-bg);
-  margin: auto;
-  padding: 2rem;
-  border: 1px solid var(--primary);
-  width: 90%;
-  max-width: 600px;
-  border-radius: 1rem;
-  position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: slideIn 0.3s;
-}
-
-.close-modal {
-  color: var(--text-muted);
-  float: right;
-  font-size: 28px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: 0.2s;
-}
-
-.close-modal:hover,
-.close-modal:focus {
-  color: var(--primary);
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.modal-title {
-  margin-top: 0;
-  color: var(--text);
-  margin-bottom: 0.5rem;
-}
-
-.modal-date-badge {
-  display: inline-block;
-  background: rgba(59, 130, 246, 0.1);
-  color: var(--primary);
-  padding: 0.25rem 0.75rem;
-  border-radius: 1rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-bottom: 1.5rem;
-}
-
-.modal-image {
-  width: 100%;
-  max-height: 300px;
-  object-fit: cover;
-  border-radius: 0.5rem;
-  margin-bottom: 1.5rem;
-  display: block;
-}
-
-.modal-image.hidden {
-  display: none;
-}
-
-.modal-description {
-  color: var(--text-muted);
-  line-height: 1.8;
-  white-space: pre-wrap;
-}
-
-.timeline-content {
-  cursor: pointer;
-}
-
-.read-more {
-  display: inline-block;
-  margin-top: 0.5rem;
-  color: var(--primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideIn {
-  from { transform: translateY(-20px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-</style>
-
-<script>
-function openJourneyModal(element) {
-  const title = element.getAttribute('data-title');
-  const date = element.getAttribute('data-date');
-  const imageUrl = element.getAttribute('data-image');
-  const description = element.getAttribute('data-description');
-
-  const modal = document.getElementById('journeyModal');
-  document.getElementById('modalTitle').innerText = title;
-  document.getElementById('modalDate').innerText = new Date(date).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' });
-  document.getElementById('modalDescription').innerText = description;
-  
-  const img = document.getElementById('modalImage');
-  if (imageUrl) {
-    // Use convertImageUrl from imageUtils.js
-    img.src = window.convertImageUrl ? window.convertImageUrl(imageUrl) : imageUrl;
-    img.classList.remove('hidden');
-    img.onerror = function() {
-      handleImageError(this);
-    };
-  } else {
-    img.classList.add('hidden');
-  }
-  
-  modal.classList.add('show');
-  document.body.style.overflow = 'hidden'; // Prevent scrolling
-}
-
-function closeJourneyModal() {
-  const modal = document.getElementById('journeyModal');
-  modal.classList.remove('show');
-  document.body.style.overflow = ''; // Restore scrolling
-}
-
-// Close modal when clicking outside
-window.onclick = function(event) {
-  const modal = document.getElementById('journeyModal');
-  if (event.target == modal) {
-    closeJourneyModal();
-  }
-}
-</script>

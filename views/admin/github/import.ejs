@@ -5,6 +5,7 @@
 <div class="github-import-container">
   <div class="search-panel">
     <form action="/admin/github/fetch" method="POST" class="search-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="form-group">
         <label for="username">GitHub Username</label>
         <div class="input-group">
@@ -20,6 +21,7 @@
 
   <% if (repos) { %>
     <form action="/admin/github/import" method="POST" class="import-form">
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
       <div class="repos-list">
         <h3>Found <%= repos.length %> Public Repositories</h3>
         <p class="mb-4 text-muted">Select repositories to import as portfolio projects.</p>

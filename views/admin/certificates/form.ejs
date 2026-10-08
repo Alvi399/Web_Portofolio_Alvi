@@ -1,0 +1,69 @@
+<div class="page-header-flex">
+  <h2><%= certificate ? 'Edit Certificate' : 'Add New Certificate' %></h2>
+  <a href="/admin/certificates" class="btn btn-secondary">Cancel</a>
+</div>
+
+<form action="<%= (certificate ? '/admin/certificates/' + certificate.id : '/admin/certificates') + '?_csrf=' + csrfToken %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+  
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-group">
+        <label for="title">Certificate Title / Nama Sertifikat</label>
+        <input type="text" id="title" name="title" value="<%= certificate ? certificate.title : '' %>" required class="form-control" placeholder="e.g. AWS Certified Developer">
+      </div>
+
+      <div class="form-group">
+        <label for="issuer">Issuer / Penerbit</label>
+        <input type="text" id="issuer" name="issuer" value="<%= certificate ? certificate.issuer : '' %>" required class="form-control" placeholder="e.g. Amazon Web Services">
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category / Kategori</label>
+        <select id="category" name="category" class="form-control">
+          <option value="Backend" <%= certificate && certificate.category === 'Backend' ? 'selected' : '' %>>Backend</option>
+          <option value="Frontend" <%= certificate && certificate.category === 'Frontend' ? 'selected' : '' %>>Frontend</option>
+          <option value="AI" <%= certificate && certificate.category === 'AI' ? 'selected' : '' %>>AI</option>
+          <option value="Other" <%= certificate && certificate.category === 'Other' ? 'selected' : (!certificate ? 'selected' : '') %>>Other</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-col">
+      <div class="form-group">
+        <label for="date">Date Issued / Tanggal</label>
+        <% const certDateVal = certificate && certificate.date ? (typeof certificate.date === 'string' ? certificate.date.substring(0, 10) : new Date(certificate.date).toISOString().substring(0, 10)) : ''; %>
+        <input type="date" id="date" name="date" value="<%= certDateVal %>" required class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="credential_url">Credential URL / Link Verifikasi</label>
+        <input type="url" id="credential_url" name="credential_url" value="<%= certificate ? (certificate.credential_url || '') : '' %>" placeholder="https://..." class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="image">Image Upload / Gambar Sertifikat (Opsional)</label>
+        <input type="file" id="image" name="image" accept="image/*" class="form-control">
+        <% if (certificate && certificate.image) { %>
+          <div style="margin-top: 10px;">
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Gambar Saat Ini:</p>
+            <img src="<%= getImageUrl(certificate.image) %>" style="max-height: 100px; border-radius: 6px; border: 1px solid #ddd;" onerror="handleImageError(this)">
+          </div>
+        <% } %>
+      </div>
+
+      <div class="form-group">
+        <label class="checkbox-container">
+          <input type="checkbox" name="is_highlight" <%= certificate && certificate.is_highlight ? 'checked' : '' %>>
+          <span class="checkmark"></span>
+          Sorot di Halaman Utama (Highlight)
+        </label>
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top: 2rem;">
+    <button type="submit" class="btn btn-success"><%= certificate ? 'Update Certificate' : 'Save Certificate' %></button>
+    <a href="/admin/certificates" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>

@@ -1,0 +1,48 @@
+<%
+  const _p = (typeof profile !== 'undefined' && profile) ? profile : {};
+  const _m = (typeof meta !== 'undefined' && meta) ? meta : {};
+  const _sUrl = (typeof siteUrl !== 'undefined' && siteUrl) ? siteUrl : '';
+  const _siteName = _p.full_name || 'Portfolio';
+  const _pageTitle = (typeof title !== 'undefined' && title ? title : 'Portfolio') + ' | ' + _siteName;
+  const _defaultDesc = [_p.headline || _p.tagline, _p.about_summary].filter(Boolean).join(' — ') || 'Portfolio Website';
+  const _desc = String(_m.description || _defaultDesc).replace(/\s+/g, ' ').trim().slice(0, 200);
+  const _abs = (u) => {
+    if (!u) return '';
+    if (/^https?:\/\//i.test(u)) return u;
+    return _sUrl + (u.charAt(0) === '/' ? u : '/' + u);
+  };
+  const _rawImg = _m.image || _p.og_image || _p.profile_image || '';
+  const _img = _abs(typeof getImageUrl === 'function' ? getImageUrl(_rawImg) : _rawImg);
+  const _url = _sUrl + (_m.path || '/');
+  const _type = _m.type || 'website';
+  const _sameAs = [_p.linkedin_url, _p.github_url].filter(Boolean);
+  const _jsonLd = _m.jsonLd ? JSON.stringify({
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: _siteName,
+    jobTitle: _p.headline || _p.tagline || undefined,
+    url: _sUrl,
+    image: _img || undefined,
+    sameAs: _sameAs.length ? _sameAs : undefined
+  }).replace(/</g, '\\u003c') : '';
+%>
+  <title><%= _pageTitle %></title>
+  <meta name="description" content="<%= _desc %>">
+  <link rel="canonical" href="<%= _url %>">
+  <meta property="og:title" content="<%= _pageTitle %>">
+  <meta property="og:description" content="<%= _desc %>">
+  <meta property="og:type" content="<%= _type %>">
+  <meta property="og:url" content="<%= _url %>">
+  <meta property="og:site_name" content="<%= _siteName %>">
+<% if (_img) { %>
+  <meta property="og:image" content="<%= _img %>">
+<% } %>
+  <meta name="twitter:card" content="<%= _img ? 'summary_large_image' : 'summary' %>">
+  <meta name="twitter:title" content="<%= _pageTitle %>">
+  <meta name="twitter:description" content="<%= _desc %>">
+<% if (_img) { %>
+  <meta name="twitter:image" content="<%= _img %>">
+<% } %>
+<% if (_jsonLd) { %>
+  <script type="application/ld+json"><%- _jsonLd %></script>
+<% } %>

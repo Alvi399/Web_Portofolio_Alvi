@@ -1,0 +1,56 @@
+<div class="page-header-flex">
+  <h2><%= skill ? 'Edit Skill' : 'Add New Skill' %></h2>
+  <a href="/admin/skills" class="btn btn-secondary">Cancel</a>
+</div>
+
+<form action="<%= (skill ? '/admin/skills/' + skill.id : '/admin/skills') + '?_csrf=' + csrfToken %>" method="POST" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+
+  <div class="form-grid">
+    <div class="form-col">
+      <div class="form-group">
+        <label for="name">Skill Name / Nama Keahlian</label>
+        <input type="text" id="name" name="name" value="<%= skill ? skill.name : '' %>" required class="form-control" placeholder="e.g. Node.js / React / Docker">
+      </div>
+
+      <div class="form-group">
+        <label for="category">Category / Kategori</label>
+        <select id="category" name="category" class="form-control">
+          <option value="Frontend" <%= skill && skill.category === 'Frontend' ? 'selected' : '' %>>Frontend</option>
+          <option value="Backend" <%= skill && skill.category === 'Backend' ? 'selected' : '' %>>Backend</option>
+          <option value="Database" <%= skill && skill.category === 'Database' ? 'selected' : '' %>>Database</option>
+          <option value="Soft Skills" <%= skill && skill.category === 'Soft Skills' ? 'selected' : '' %>>Soft Skills</option>
+          <option value="Tools" <%= skill && skill.category === 'Tools' ? 'selected' : '' %>>Tools</option>
+          <option value="Other" <%= skill && skill.category === 'Other' ? 'selected' : (!skill ? 'selected' : '') %>>Other</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="proficiency">Proficiency Level (0 - 100%)</label>
+        <input type="number" id="proficiency" name="proficiency" min="0" max="100" value="<%= skill ? skill.proficiency : 80 %>" class="form-control">
+      </div>
+    </div>
+
+    <div class="form-col">
+      <div class="form-group">
+        <label for="icon">Icon / Emoji</label>
+        <input type="text" id="icon" name="icon" value="<%= skill ? (skill.icon || '') : '' %>" class="form-control" placeholder="e.g. ⚡ / 🚀 / devicon class">
+      </div>
+
+      <div class="form-group">
+        <label for="image">Image URL (Opsional)</label>
+        <input type="url" id="image" name="image" value="<%= skill ? (skill.image || '') : '' %>" class="form-control" placeholder="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg">
+      </div>
+
+      <div class="form-group">
+        <label for="sort_order">Sort Order / Urutan</label>
+        <input type="number" id="sort_order" name="sort_order" value="<%= skill ? skill.sort_order : 0 %>" class="form-control">
+      </div>
+    </div>
+  </div>
+
+  <div class="form-actions" style="margin-top: 2rem;">
+    <button type="submit" class="btn btn-success"><%= skill ? 'Update Skill' : 'Save Skill' %></button>
+    <a href="/admin/skills" class="btn btn-secondary">Cancel</a>
+  </div>
+</form>

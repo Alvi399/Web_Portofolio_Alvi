@@ -1,72 +1,109 @@
-<section class="page-header">
-  <div class="container animate-on-scroll fade-up">
-    <h1 class="page-title">Contact</h1>
-    <p class="page-subtitle">Have a project in mind or want to say hello?</p>
-  </div>
-</section>
+<% const _p = (typeof profile !== 'undefined' && profile) ? profile : {}; %>
+<% const _old = (typeof old !== 'undefined' && old) ? old : {}; %>
+<% const _fe = (typeof fieldErrors !== 'undefined' && fieldErrors) ? fieldErrors : {}; %>
 
-<section class="section contact-section">
+<header class="page-head">
+  <div class="container animate-on-scroll">
+    <h1 class="page-title"><%= t('Kontak', 'Contact') %></h1>
+    <p class="page-subtitle"><%= typeof lang !== 'undefined' && lang === 'en' ? 'Have a project or opportunity? Let\'s talk.' : 'Ada project atau peluang kerja? Mari berdiskusi.' %></p>
+  </div>
+</header>
+
+<section class="section">
   <div class="container">
     <div class="contact-grid">
-      <div class="contact-info animate-on-scroll fade-right">
-        <h2 class="section-title">Get In Touch</h2>
+      <div class="contact-text animate-on-scroll">
         <p class="contact-intro">
-          I'm currently available for freelance work and open to full-time opportunities. If you have a question or just want to connect, feel free to reach out.
+          <% if (_p.availability_status === 'freelance') { %>
+            Saat ini saya terbuka untuk pekerjaan freelance. Silakan hubungi saya lewat salah satu kanal di bawah.
+          <% } else if (_p.availability_status === 'not_available') { %>
+            Saat ini saya belum tersedia untuk pekerjaan baru, namun Anda tetap bisa mengirim pesan.
+          <% } else { %>
+            Saya terbuka untuk peluang kerja penuh waktu maupun freelance. Silakan hubungi saya lewat salah satu kanal di bawah.
+          <% } %>
         </p>
-        
-        <div class="contact-methods">
-          <% if (typeof profile !== 'undefined' && profile.email) { %>
-            <div class="contact-item">
-              <span class="contact-icon">📧</span>
-              <div class="contact-details">
-                <span class="contact-label">Email</span>
-                <a href="mailto:<%= profile.email %>" class="contact-value"><%= profile.email %></a>
-              </div>
-            </div>
+
+        <ul class="contact-list">
+          <% if (_p.email) { %>
+            <li>
+              <div class="label">Email</div>
+              <a href="mailto:<%= _p.email %>" class="value"><%= _p.email %></a>
+            </li>
           <% } %>
-          
-          <% if (typeof profile !== 'undefined' && profile.location) { %>
-            <div class="contact-item">
-              <span class="contact-icon">📍</span>
-              <div class="contact-details">
-                <span class="contact-label">Location</span>
-                <span class="contact-value"><%= profile.location %></span>
-              </div>
-            </div>
+
+          <% if (_p.whatsapp) { %>
+            <li>
+              <div class="label">WhatsApp</div>
+              <a href="https://wa.me/<%= _p.whatsapp %>" target="_blank" rel="noopener noreferrer" class="value">+<%= _p.whatsapp %></a>
+            </li>
           <% } %>
-        </div>
+
+          <% if (_p.linkedin_url) { %>
+            <li>
+              <div class="label">LinkedIn</div>
+              <a href="<%= _p.linkedin_url %>" target="_blank" rel="noopener noreferrer" class="value">LinkedIn Profile <span>&#8599;</span></a>
+            </li>
+          <% } %>
+
+          <% if (_p.github_url) { %>
+            <li>
+              <div class="label">GitHub</div>
+              <a href="<%= _p.github_url %>" target="_blank" rel="noopener noreferrer" class="value">GitHub Profile <span>&#8599;</span></a>
+            </li>
+          <% } %>
+
+          <% if (_p.location) { %>
+            <li>
+              <div class="label">Location</div>
+              <div class="value"><%= _p.location %></div>
+            </li>
+          <% } %>
+        </ul>
       </div>
-      
-      <div class="contact-form-wrapper animate-on-scroll fade-left">
-        <% if (success) { %>
-          <div class="alert alert-success">
-            <%= success %>
-          </div>
+
+      <div class="contact-form-wrapper animate-on-scroll">
+        <% if (typeof success !== 'undefined' && success) { %>
+          <div class="alert alert-success" role="status"><%= success %></div>
         <% } %>
-        
-        <form action="/contact" method="POST" class="contact-form">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" name="name" required placeholder="Your Name">
-          </div>
-          
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" name="email" required placeholder="your@email.com">
-          </div>
-          
-          <div class="form-group">
-            <label for="subject">Subject</label>
-            <input type="text" id="subject" name="subject" placeholder="Project Inquiry">
-          </div>
-          
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="5" required placeholder="How can I help you?"></textarea>
-          </div>
-          
-          <button type="submit" class="btn btn-primary btn-block">Send Message</button>
-        </form>
+        <% if (typeof error !== 'undefined' && error) { %>
+          <div class="alert alert-error" role="alert"><%= error %></div>
+        <% } %>
+
+        <div class="form-panel">
+          <form action="/contact" method="POST" novalidate>
+            <input type="hidden" name="_csrf" value="<%= typeof csrfToken !== 'undefined' ? csrfToken : '' %>">
+            <div class="hp" aria-hidden="true">
+              <label for="website">Website</label>
+              <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+            
+            <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" id="name" name="name" class="form-control" required maxlength="100" placeholder="John Doe" value="<%= _old.name || '' %>">
+              <% if (_fe.name) { %><small class="field-error"><%= _fe.name %></small><% } %>
+            </div>
+
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" class="form-control" required maxlength="150" placeholder="john@example.com" value="<%= _old.email || '' %>">
+              <% if (_fe.email) { %><small class="field-error"><%= _fe.email %></small><% } %>
+            </div>
+
+            <div class="form-group">
+              <label for="subject">Subject</label>
+              <input type="text" id="subject" name="subject" class="form-control" maxlength="150" placeholder="Project collaboration" value="<%= _old.subject || '' %>">
+              <% if (_fe.subject) { %><small class="field-error"><%= _fe.subject %></small><% } %>
+            </div>
+
+            <div class="form-group">
+              <label for="message">Message</label>
+              <textarea id="message" name="message" class="form-control" required maxlength="3000" placeholder="How can I help you?"><%= _old.message || '' %></textarea>
+              <% if (_fe.message) { %><small class="field-error"><%= _fe.message %></small><% } %>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-block">Send Message</button>
+          </form>
+        </div>
       </div>
     </div>
   </div>

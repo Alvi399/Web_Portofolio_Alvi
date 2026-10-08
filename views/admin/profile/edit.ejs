@@ -2,12 +2,19 @@
   <h2>Edit Profile</h2>
 </div>
 
-<form action="/admin/profile" method="POST" enctype="multipart/form-data" class="admin-form">
+<form action="/admin/profile?_csrf=<%= csrfToken %>" method="POST" enctype="multipart/form-data" class="admin-form">
+  <input type="hidden" name="_csrf" value="<%= csrfToken %>">
   <div class="form-grid">
     <div class="form-col">
       <div class="form-group">
-        <label for="full_name">Full Name</label>
+        <label for="full_name">Full Name (Nama Lengkap)</label>
         <input type="text" id="full_name" name="full_name" value="<%= profile.full_name %>" required class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="display_name">Display Name / Nama Tampilan (Hero H1 &amp; Navbar)</label>
+        <input type="text" id="display_name" name="display_name" maxlength="40" value="<%= profile.display_name || '' %>" placeholder="Malvix" class="form-control">
+        <small class="text-muted">Nama pendek untuk H1 Hero dan brand navbar (maks 40 karakter).</small>
       </div>
       
       <div class="form-group">
@@ -16,9 +23,66 @@
       </div>
 
       <div class="form-group">
-        <label for="bio">Bio</label>
+        <label for="headline">Headline / Role (tampil di hero)</label>
+        <input type="text" id="headline" name="headline" maxlength="120" value="<%= profile.headline || '' %>" placeholder="Backend Developer — Node.js &amp; MySQL" class="form-control">
+        <small class="text-muted">Jika kosong, Tagline dipakai di hero.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="availability_status">Status Ketersediaan</label>
+        <select id="availability_status" name="availability_status" class="form-control">
+          <option value="open_to_work" <%= profile.availability_status === 'open_to_work' ? 'selected' : '' %>>Open to work</option>
+          <option value="freelance" <%= profile.availability_status === 'freelance' ? 'selected' : '' %>>Terbuka untuk freelance</option>
+          <option value="not_available" <%= profile.availability_status === 'not_available' ? 'selected' : '' %>>Tidak tersedia (badge disembunyikan)</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="work_preference">Preferensi Kerja</label>
+        <input type="text" id="work_preference" name="work_preference" maxlength="60" value="<%= profile.work_preference || '' %>" placeholder="Remote / Hybrid / Onsite — Surabaya" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label for="about_summary">Ringkasan Profil (About Summary - 1 Paragraf Singkat)</label>
+        <textarea id="about_summary" name="about_summary" rows="3" placeholder="Paragraf perkenalan singkat yang ramah HRD..." class="form-control"><%= profile.about_summary || '' %></textarea>
+        <small class="text-muted">Ditampilkan di bagian atas hero dan About page.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="looking_for">Peran / Kesempatan yang Dicari (Looking For)</label>
+        <textarea id="looking_for" name="looking_for" rows="2" placeholder="Contoh: Backend / Fullstack Developer (Node.js, Go) — Remote / Onsite Surabaya" class="form-control"><%= profile.looking_for || '' %></textarea>
+        <small class="text-muted">Penjelasan spesifik posisi atau peran yang Anda minati.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">Bio Lengkap</label>
         <textarea id="bio" name="bio" rows="6" class="form-control"><%= profile.bio %></textarea>
       </div>
+
+      <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
+      <h3 style="margin-bottom: 1rem; color: #38bdf8;">🌐 English Translation (Optional)</h3>
+      
+      <div class="form-group">
+        <label for="headline_en">Headline / Role (EN)</label>
+        <input type="text" id="headline_en" name="headline_en" maxlength="120" value="<%= profile.headline_en || '' %>" placeholder="Backend Developer — Node.js &amp; MySQL" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="work_preference_en">Work Preference (EN)</label>
+        <input type="text" id="work_preference_en" name="work_preference_en" maxlength="60" value="<%= profile.work_preference_en || '' %>" placeholder="Remote / Hybrid / Onsite — Surabaya" class="form-control">
+      </div>
+      <div class="form-group">
+        <label for="about_summary_en">About Summary (EN)</label>
+        <textarea id="about_summary_en" name="about_summary_en" rows="3" class="form-control"><%= profile.about_summary_en || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="looking_for_en">Looking For (EN)</label>
+        <textarea id="looking_for_en" name="looking_for_en" rows="2" class="form-control"><%= profile.looking_for_en || '' %></textarea>
+      </div>
+      <div class="form-group">
+        <label for="bio_en">Full Bio (EN)</label>
+        <textarea id="bio_en" name="bio_en" rows="6" class="form-control"><%= profile.bio_en || '' %></textarea>
+      </div>
+      <hr style="margin: 2rem 0; border: 0; border-top: 1px solid rgba(255,255,255,0.1);">
 
       <div class="form-group">
         <label>Profile Image</label>
@@ -29,6 +93,7 @@
         </div>
         <input type="file" name="profile_image" class="form-control file-input">
       </div>
+
     </div>
 
     <div class="form-col">
@@ -49,6 +114,11 @@
         <input type="text" id="location" name="location" value="<%= profile.location %>" class="form-control">
       </div>
 
+      <div class="form-group">
+        <label for="whatsapp">WhatsApp (format internasional tanpa +, mis. 6281234567890)</label>
+        <input type="text" id="whatsapp" name="whatsapp" inputmode="numeric" value="<%= profile.whatsapp || '' %>" placeholder="6281234567890" class="form-control">
+      </div>
+
       <h3>Social Links</h3>
       
       <div class="form-group">
@@ -61,10 +131,6 @@
         <input type="url" id="linkedin_url" name="linkedin_url" value="<%= profile.linkedin_url %>" class="form-control">
       </div>
       
-      <div class="form-group">
-        <label for="resume_url">Resume URL</label>
-        <input type="url" id="resume_url" name="resume_url" value="<%= profile.resume_url %>" class="form-control">
-      </div>
     </div>
   </div>
 

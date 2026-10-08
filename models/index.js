@@ -6,5 +6,7 @@ const Contact = require('./Contact');
 const User = require('./User');
 const Certificate = require('./Certificate');
 const Journey = require('./Journey');
+const Testimonial = require('./Testimonial');
+const Event = require('./Event');
 
-module.exports = { sequelize, Profile, Project, Skill, Contact, User, Certificate, Journey };
+module.exports = { sequelize, Profile, Project, Skill, Contact, User, Certificate, Journey, Testimonial, Event };

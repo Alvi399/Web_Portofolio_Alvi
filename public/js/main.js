@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   if (navToggle) {
     navToggle.addEventListener('click', () => {
-      navLinks.classList.toggle('active');
+      navToggle.setAttribute('aria-expanded', String(navLinks.classList.toggle('active')));
       navToggle.classList.toggle('active');
     });
   }
@@ -47,4 +47,41 @@ document.addEventListener('DOMContentLoaded', () => {
   }, observerOptions);
 
   animateElements.forEach(el => observer.observe(el));
+});
+
+// ===== ANALYTICS TRACKING (T-40) =====
+document.addEventListener('DOMContentLoaded', () => {
+  const track = (eventType, targetId = null) => {
+    fetch('/api/track-event', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ event_type: eventType, target_id: targetId })
+    }).catch(() => {});
+  };
+
+  // Track CV downloads
+  document.querySelectorAll('a[href^="/resume"]').forEach(el => {
+    el.addEventListener('click', () => track('cv_download'));
+  });
+
+  // Track Contact page clicks & mailto
+  document.querySelectorAll('a[href^="/contact"]').forEach(el => {
+    el.addEventListener('click', () => track('contact_click'));
+  });
+  document.querySelectorAll('a[href^="mailto:"]').forEach(el => {
+    el.addEventListener('click', () => track('email_click'));
+  });
+
+  // Track WhatsApp clicks
+  document.querySelectorAll('a[href*="wa.me/"]').forEach(el => {
+    el.addEventListener('click', () => track('whatsapp_click'));
+  });
+
+  // Track Project Views
+  const isProjectDetail = window.location.pathname.startsWith('/projects/') && window.location.pathname !== '/projects/';
+  if (isProjectDetail) {
+    const slug = window.location.pathname.split('/').pop();
+    // Fire event after a short delay to ensure it's a real view, not a bounce
+    setTimeout(() => track('project_view', slug), 2000);
+  }
 });
