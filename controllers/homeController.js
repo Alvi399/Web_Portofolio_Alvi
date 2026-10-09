@@ -7,8 +7,11 @@ const { sendContactNotification } = require('../services/mailer');
 const { trackEvent } = require('../services/analyticsService');
 const { buildCv } = require('../services/cvService');
 
-const renderError = (res, status, title, message) =>
-  res.status(status).render('error', { title, message, currentPage: '' });
+const renderError = (res, status, title, message, err) => {
+  if (err) console.error('RENDER_ERROR:', err);
+  return res.status(status).render('error', { title, message, currentPage: '' });
+};
+
 
 // Only published projects are visible to the public
 const PUBLISHED = { status: 'published' };
@@ -93,12 +96,15 @@ exports.projects = async (req, res) => {
     const profile = await Profile.findOne();
     const selectedTech = (req.query.tech || '').trim();
     const searchQuery = (req.query.q || '').trim();
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 9; // 9 projects per page
 
-    // Fetch all published projects for seamless instant technology filtering
-    const allPublished = await Project.findAll({
+    // Fetch all published projects
+    const allPublished = (await Project.findAll({
       where: PUBLISHED,
       order: [['sort_order', 'ASC'], ['createdAt', 'DESC']]
-    });
+    })) || [];
+
 
     // Extract unique technologies used across all published projects
     const techSet = new Set();
@@ -112,24 +118,57 @@ exports.projects = async (req, res) => {
     });
     const usedTechnologies = Array.from(techSet).sort((a, b) => a.localeCompare(b));
 
+    // Apply filtering by technology and search query
+    let filteredProjects = allPublished.filter(p => {
+      let matchesTech = true;
+      if (selectedTech && selectedTech.toLowerCase() !== 'all') {
+        const pTechs = (Array.isArray(p.technologies) ? p.technologies : []).map(t => String(t).toLowerCase());
+        matchesTech = pTechs.includes(selectedTech.toLowerCase());
+      }
+      let matchesSearch = true;
+      if (searchQuery) {
+        const q = searchQuery.toLowerCase();
+        const title = (p.title || '').toLowerCase();
+        const desc = (p.description || '').toLowerCase();
+        const pTechs = (Array.isArray(p.technologies) ? p.technologies : []).map(t => String(t).toLowerCase());
+        matchesSearch = title.includes(q) || desc.includes(q) || pTechs.some(t => t.includes(q));
+      }
+      return matchesTech && matchesSearch;
+    });
+
+    const totalItems = filteredProjects.length;
+    const totalPages = Math.max(1, Math.ceil(totalItems / limit));
+    const validPage = Math.min(page, totalPages);
+    const offset = (validPage - 1) * limit;
+
+    const paginatedProjects = filteredProjects.slice(offset, offset + limit);
+
     res.render('projects', {
       title: 'Projects',
       profile: profile || {},
-      projects: allPublished,
+      projects: paginatedProjects,
       usedTechnologies,
       selectedTech,
       searchQuery,
       currentPage: 'projects',
+      pagination: {
+        page: validPage,
+        limit,
+        totalPages,
+        totalItems
+      },
       meta: {
         path: '/projects',
         description: 'Kumpulan project yang pernah saya bangun, lengkap dengan teknologi dan tautan kode.'
       }
     });
   } catch (err) {
-    console.error(err);
-    renderError(res, 500, 'Error', 'Server error');
+    renderError(res, 500, 'Error', 'Server error', err);
   }
 };
+
+
+
 
 
 exports.projectDetail = async (req, res) => {
@@ -271,13 +310,30 @@ exports.certificates = async (req, res) => {
 
 exports.journey = async (req, res) => {
   try {
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = 10; // 10 journey milestones per page
+    const offset = (page - 1) * limit;
+
     const profile = await Profile.findOne();
-    const journeys = await Journey.findAll({ order: [['date', 'DESC']] });
+    const { count, rows: journeys } = await Journey.findAndCountAll({
+      order: [['date', 'DESC']],
+      limit,
+      offset
+    });
+    
+    const totalPages = Math.max(1, Math.ceil(count / limit));
+
     res.render('journey', {
       title: 'My Journey',
       profile: profile || {},
       journeys,
       currentPage: 'journey',
+      pagination: {
+        page,
+        limit,
+        totalPages,
+        totalItems: count
+      },
       meta: { path: '/journey', description: 'Perjalanan pendidikan dan karir saya.' }
     });
   } catch (err) {
@@ -285,6 +341,7 @@ exports.journey = async (req, res) => {
     renderError(res, 500, 'Error', 'Server error');
   }
 };
+
 
 // GET /resume - download the uploaded CV, fall back to external URL, else 404
 exports.resume = async (req, res) => {

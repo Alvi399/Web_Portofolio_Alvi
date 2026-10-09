@@ -41,10 +41,12 @@ jest.mock('../models', () => {
       findAll: jest.fn().mockResolvedValue([])
     },
     Certificate: {
-      findAll: jest.fn().mockResolvedValue([])
+      findAll: jest.fn().mockResolvedValue([]),
+      findAndCountAll: jest.fn().mockResolvedValue({ count: 0, rows: [] })
     },
     Journey: {
-      findAll: jest.fn().mockResolvedValue([])
+      findAll: jest.fn().mockResolvedValue([]),
+      findAndCountAll: jest.fn().mockResolvedValue({ count: 0, rows: [] })
     },
     Testimonial: {
       findAll: jest.fn().mockResolvedValue([])

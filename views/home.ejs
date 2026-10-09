@@ -2,61 +2,79 @@
   <div class="container">
     <div class="hero-grid">
       <div class="hero-text animate-on-scroll">
-        <h1 class="hero-title" style="line-height: 1.05; margin-bottom: 1.5rem; text-wrap: balance; word-break: break-word;">
-          <span style="display: block; font-size: 0.45em; color: var(--ink-2); font-family: var(--font-mono); font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Hello, I'm</span>
-          <%= typeof profile !== 'undefined' && profile.full_name ? profile.full_name : 'Muhammad Alvi Kirana Zulfan Nazal' %>
+        <h1 class="hero-title"
+          style="line-height: 1.05; margin-bottom: 1.5rem; text-wrap: balance; word-break: break-word;">
+          <span
+            style="display: block; font-size: 0.45em; color: var(--ink-2); font-family: var(--font-mono); font-weight: 500; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Hello,
+            I'm</span>
+          <%= typeof profile !=='undefined' && profile.full_name ? profile.full_name
+            : 'Muhammad Alvi Kirana Zulfan Nazal' %>
         </h1>
 
         <p class="hero-lead">
-          <%= (typeof profile !== 'undefined' && (tField(profile, 'headline') || profile.tagline)) || 'Full Stack Developer | AI & Data Solutions' %>
+          <%= (typeof profile !=='undefined' && (tField(profile, 'headline' ) || profile.tagline))
+            || 'Full Stack Developer | AI & Data Solutions' %>
         </p>
 
         <p class="hero-bio">
-          <%= typeof profile !== 'undefined' ? (tField(profile, 'about_summary') || tField(profile, 'bio') || 'Passionate about building scalable web applications.') : 'Passionate about building scalable web applications.' %>
+          <%= typeof profile !=='undefined' ? (tField(profile, 'about_summary' ) || tField(profile, 'bio' )
+            || 'Passionate about building scalable web applications.' )
+            : 'Passionate about building scalable web applications.' %>
         </p>
 
         <div class="hero-cta mt-4">
-          <% if (typeof profile !== 'undefined' && (profile.resume_file || profile.resume_url)) { %>
+          <% if (typeof profile !=='undefined' && (profile.resume_file || profile.resume_url)) { %>
             <a href="/cv" class="btn btn-primary link-arrow">View ATS CV <span>→</span></a>
-          <% } %>
-          <a href="/projects" class="btn btn-outline">My Work</a>
-          <a href="/contact" class="btn btn-ink">Contact Me</a>
-        </div>
-        
-        <% if (typeof profile !== 'undefined' && profile.email) { %>
-          <div class="hero-mail">
-            Email: <a href="mailto:<%= profile.email %>"><%= profile.email %></a>
-          </div>
-        <% } %>
-      </div>
-      
-      <div class="hero-aside animate-on-scroll">
-        <% if (typeof profile !== 'undefined' && profile.profile_image) { %>
-          <div class="portrait" style="position: relative; background: var(--ink); overflow: hidden;">
-            <img src="<%= getImageUrl(profile.profile_image) %>" alt="<%= displayName(profile) %>" width="300" height="375" onerror="handleImageError(this)" style="filter: grayscale(100%) contrast(110%); opacity: 0.95;">
-            <div style="position: absolute; bottom: 0; right: 0; width: 48px; height: 48px; background: var(--accent); border-top: var(--line); border-left: var(--line);"></div>
-          </div>
-        <% } %>
-        
-        <div class="fact-card">
-          <h2>Status</h2>
-          <dl>
-            <dt>Availability</dt>
-            <dd>
-              <% if (typeof profile !== 'undefined' && (profile.availability_status === 'open_to_work' || profile.availability_status === 'freelance')) { %>
-                <%= profile.availability_status === 'freelance' ? 'Freelance' : 'Open to work' %>
-                <% if (profile.work_preference || profile.work_preference_en) { %> · <%= tField(profile, 'work_preference') %><% } %>
-              <% } else { %>
-                Unavailable
-              <% } %>
-            </dd>
-            
-            <% if (typeof profile !== 'undefined' && profile.location) { %>
-              <dt>Location</dt>
-              <dd><%= profile.location %></dd>
             <% } %>
-          </dl>
+              <a href="/projects" class="btn btn-outline">My Work</a>
+              <a href="/contact" class="btn btn-ink">Contact Me</a>
         </div>
+
+        <% if (typeof profile !=='undefined' && profile.email) { %>
+          <div class="hero-mail">
+            Email: <a href="mailto:<%= profile.email %>">
+              <%= profile.email %>
+            </a>
+          </div>
+          <% } %>
+      </div>
+
+      <div class="hero-aside animate-on-scroll">
+        <% if (typeof profile !=='undefined' && profile.profile_image) { %>
+          <div class="portrait" style="position: relative; background: var(--ink); overflow: hidden;">
+            <img src="<%= getImageUrl(profile.profile_image) %>" alt="<%= displayName(profile) %>" width="300"
+              height="375" onerror="handleImageError(this)"
+              style="filter: grayscale(100%) contrast(110%); opacity: 0.95;">
+            <div
+              style="position: absolute; bottom: 0; right: 0; width: 48px; height: 48px; background: var(--accent); border-top: var(--line); border-left: var(--line);">
+            </div>
+          </div>
+          <% } %>
+
+            <div class="fact-card">
+              <h2>Status</h2>
+              <dl>
+                <dt>Availability</dt>
+                <dd>
+                  <% if (typeof profile !=='undefined' && (profile.availability_status==='open_to_work' ||
+                    profile.availability_status==='freelance' )) { %>
+                    <%= profile.availability_status==='freelance' ? 'Freelance' : 'Open to work' %>
+                      <% if (profile.work_preference || profile.work_preference_en) { %> · <%=
+                          tField(profile, 'work_preference' ) %>
+                          <% } %>
+                            <% } else { %>
+                              Unavailable
+                              <% } %>
+                </dd>
+
+                <% if (typeof profile !=='undefined' && profile.location) { %>
+                  <dt>Location</dt>
+                  <dd>
+                    <%= profile.location %>
+                  </dd>
+                  <% } %>
+              </dl>
+            </div>
       </div>
     </div>
   </div>
@@ -65,39 +83,51 @@
 <section class="section section-alt">
   <div class="container">
     <div class="section-head animate-on-scroll">
-      <h2 class="section-title"><%= t('Project Unggulan', 'Featured Work') %></h2>
+      <h2 class="section-title">
+        <%= t('Project Unggulan', 'Featured Work' ) %>
+      </h2>
       <a href="/projects" class="btn btn-sm">All Projects &rarr;</a>
     </div>
-    
+
     <div class="proj-list animate-on-scroll">
-      <% if (projects && projects.length > 0) { %>
-        <% projects.forEach((project, i) => { %>
+      <% if (projects && projects.length> 0) { %>
+        <% projects.forEach((project, i)=> { %>
           <div class="proj-row">
-            <div class="proj-num"><%= String(i + 1).padStart(2, '0') %></div>
-            <div class="proj-body">
-              <h3 class="proj-title"><a href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
-              <p class="proj-excerpt"><%= (tField(project, 'description') || '').substring(0, 100) %>...</p>
-              
-              <% if (project.technologies && Array.isArray(project.technologies) && project.technologies.length > 0) { %>
-                <div class="tag-list">
-                  <% project.technologies.slice(0, 3).forEach(tech => { %>
-                    <span class="tag"><%= tech %></span>
-                  <% }) %>
-                </div>
-              <% } %>
+            <div class="proj-num">
+              <%= String(i + 1).padStart(2, '0' ) %>
             </div>
-            
+            <div class="proj-body">
+              <h3 class="proj-title"><a href="/projects/<%= project.slug %>">
+                  <%= project.title %>
+                </a></h3>
+              <p class="proj-excerpt">
+                <%= (tField(project, 'description' ) || '' ).substring(0, 100) %>...
+              </p>
+
+              <% if (project.technologies && Array.isArray(project.technologies) && project.technologies.length> 0) { %>
+                <div class="tag-list">
+                  <% project.technologies.slice(0, 3).forEach(tech=> { %>
+                    <span class="tag">
+                      <%= tech %>
+                    </span>
+                    <% }) %>
+                </div>
+                <% } %>
+            </div>
+
             <div class="proj-links">
               <a href="/projects/<%= project.slug %>" class="btn btn-sm link-arrow">Case Study <span>→</span></a>
               <% if (project.github_url) { %>
                 <a href="<%= project.github_url %>" target="_blank" class="btn btn-sm btn-outline">Code</a>
-              <% } %>
+                <% } %>
             </div>
           </div>
-        <% }) %>
-      <% } else { %>
-        <div class="empty"><p>No projects featured yet.</p></div>
-      <% } %>
+          <% }) %>
+            <% } else { %>
+              <div class="empty">
+                <p>No projects featured yet.</p>
+              </div>
+              <% } %>
     </div>
   </div>
 </section>
@@ -107,50 +137,68 @@
     <div class="about-grid">
       <div class="animate-on-scroll">
         <div class="section-head" style="margin-bottom: 1rem;">
-          <h2 class="section-title"><%= t('Perjalanan Karir', 'My Journey') %></h2>
+          <h2 class="section-title">
+            <%= t('Perjalanan Karir', 'My Journey' ) %>
+          </h2>
         </div>
         <div class="tl">
-          <% if (typeof journeys !== 'undefined' && journeys.length > 0) { %>
-            <% journeys.slice(0, 3).forEach((item, index) => { %>
+          <% if (typeof journeys !=='undefined' && journeys.length> 0) { %>
+            <% journeys.slice(0, 3).forEach((item, index)=> { %>
               <div class="tl-item">
                 <div class="tl-date">
-                  <% const lang = typeof _lang !== 'undefined' ? _lang : 'en'; %>
-                  <% const sD = new Date(item.date).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }); %>
-                  <% const eD = item.is_current ? (lang === 'id' ? 'Sekarang' : 'Present') : (item.end_date ? new Date(item.end_date).toLocaleDateString(undefined, { year: 'numeric', month: 'short' }) : ''); %>
-                  <%= eD ? `${sD} - ${eD}` : sD %>
+                  <% const lang=typeof _lang !=='undefined' ? _lang : 'en' ; %>
+                    <% const sD=new Date(item.date).toLocaleDateString(undefined, { year: 'numeric' , month: 'short' });
+                      %>
+                      <% const eD=item.is_current ? (lang==='id' ? 'Sekarang' : 'Present' ) : (item.end_date ? new
+                        Date(item.end_date).toLocaleDateString(undefined, { year: 'numeric' , month: 'short' }) : '' );
+                        %>
+                        <%= eD ? `${sD} - ${eD}` : sD %>
                 </div>
                 <div class="tl-content">
-                  <h3 class="tl-title" style="font-size: 1.1rem;"><%= tField(item, 'title') || item.title %></h3>
+                  <h3 class="tl-title" style="font-size: 1.1rem;">
+                    <%= tField(item, 'title' ) || item.title %>
+                  </h3>
                 </div>
               </div>
-            <% }) %>
-          <% } else { %>
-            <div class="empty"><p>Journey details coming soon...</p></div>
-          <% } %>
+              <% }) %>
+                <% } else { %>
+                  <div class="empty">
+                    <p>Journey details coming soon...</p>
+                  </div>
+                  <% } %>
         </div>
         <div style="margin-top: 1rem;">
           <a href="/journey" class="btn btn-sm">Full Journey &rarr;</a>
         </div>
       </div>
-      
+
       <div class="animate-on-scroll">
         <div class="section-head" style="margin-bottom: 1rem;">
-          <h2 class="section-title"><%= t('Sertifikasi', 'Certifications') %></h2>
+          <h2 class="section-title">
+            <%= t('Sertifikasi', 'Certifications' ) %>
+          </h2>
         </div>
         <div class="cert-list">
-          <% if (typeof certificates !== 'undefined' && certificates.length > 0) { %>
-            <% certificates.slice(0, 3).forEach(cert => { %>
+          <% if (typeof certificates !=='undefined' && certificates.length> 0) { %>
+            <% certificates.slice(0, 3).forEach(cert=> { %>
               <div class="cert-row" style="padding: 1rem 0;">
-                <div class="cert-year"><%= new Date(cert.date).getFullYear() %></div>
+                <div class="cert-year">
+                  <%= new Date(cert.date).getFullYear() %>
+                </div>
                 <div class="cert-body">
-                  <h3 class="cert-title" style="font-size: 1.1rem;"><%= cert.title %></h3>
-                  <div class="cert-issuer">Issued by <%= cert.issuer %></div>
+                  <h3 class="cert-title" style="font-size: 1.1rem;">
+                    <%= cert.title %>
+                  </h3>
+                  <div class="cert-issuer">Issued by <%= cert.issuer %>
+                  </div>
                 </div>
               </div>
-            <% }) %>
-          <% } else { %>
-            <div class="empty"><p>No certifications added yet.</p></div>
-          <% } %>
+              <% }) %>
+                <% } else { %>
+                  <div class="empty">
+                    <p>No certifications added yet.</p>
+                  </div>
+                  <% } %>
         </div>
         <div style="margin-top: 1rem;">
           <a href="/certificates" class="btn btn-sm">All Certifications &rarr;</a>
@@ -160,35 +208,42 @@
   </div>
 </section>
 
-<% if (typeof testimonials !== 'undefined' && testimonials.length > 0) { %>
-<section class="section section-alt">
-  <div class="container">
-    <div class="section-head animate-on-scroll">
-      <h2 class="section-title"><%= t('Apa Kata Mereka', 'What People Say') %></h2>
+<% if (typeof testimonials !=='undefined' && testimonials.length> 0) { %>
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head animate-on-scroll">
+        <h2 class="section-title">
+          <%= t('Apa Kata Mereka', 'What People Say' ) %>
+        </h2>
+      </div>
+
+      <div class="quotes animate-on-scroll">
+        <% testimonials.forEach(item=> { %>
+          <blockquote class="quote">
+            <p>"<%= item.quote %>"</p>
+            <footer>
+              <%= item.name %>
+                <span>
+                  <%= item.position || '' %>
+                    <%= (item.position && item.company) ? 'at' : '' %>
+                      <%= item.company || '' %>
+                </span>
+            </footer>
+          </blockquote>
+          <% }) %>
+      </div>
     </div>
-    
-    <div class="quotes animate-on-scroll">
-      <% testimonials.forEach(item => { %>
-        <blockquote class="quote">
-          <p>"<%= item.quote %>"</p>
-          <footer>
-            <%= item.name %>
-            <span><%= item.position || '' %> <%= (item.position && item.company) ? 'at' : '' %> <%= item.company || '' %></span>
-          </footer>
-        </blockquote>
-      <% }) %>
-    </div>
-  </div>
-</section>
-<% } %>
+  </section>
+  <% } %>
 
 
 
-<section class="cta-band">
-  <div class="container animate-on-scroll">
-    <h2><%= typeof lang !== 'undefined' && lang === 'en' ? 'Ready to start your next project?' : 'Siap memulai proyek Anda?' %></h2>
-    <a href="/contact" class="btn">Get in touch</a>
-  </div>
-</section>
-
-
+    <section class="cta-band">
+      <div class="container animate-on-scroll">
+        <h2>
+          <%= typeof lang !=='undefined' && lang==='en' ? 'Ready to start your next project?'
+            : 'Siap memulai proyek Anda?' %>
+        </h2>
+        <a href="/contact" class="btn">Get in touch</a>
+      </div>
+    </section>
