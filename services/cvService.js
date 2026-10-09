@@ -89,7 +89,7 @@ async function collect(lang) {
   const [profile, skills, projects, journeys, certificates] = await Promise.all([
     Profile.findOne(),
     Skill.findAll({ order: [['category', 'ASC'], ['sort_order', 'ASC']] }),
-    Project.findAll({ where: { status: 'published' }, order: [['is_featured', 'DESC'], ['sort_order', 'ASC']], limit: 6 }),
+    Project.findAll({ where: { status: 'published' }, order: [['is_featured', 'DESC'], ['sort_order', 'ASC']] }),
     Journey.findAll({ order: [['date', 'DESC']] }),
     Certificate.findAll({ order: [['date', 'DESC']] })
   ]);
