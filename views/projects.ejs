@@ -1,45 +1,57 @@
+<% const _selTech = (typeof selectedTech !== 'undefined' && selectedTech) ? selectedTech : ''; %>
+<% const _searchQ = (typeof searchQuery !== 'undefined' && searchQuery) ? searchQuery : ''; %>
+<% const _usedTechs = (typeof usedTechnologies !== 'undefined' && Array.isArray(usedTechnologies)) ? usedTechnologies : []; %>
+
 <header class="page-head">
   <div class="container animate-on-scroll">
     <h1 class="page-title"><%= t('Proyek', 'Projects') %></h1>
-    <p class="page-subtitle">A showcase of my recent work and open source contributions.</p>
-    <div style="margin-top: 1.5rem; max-width: 400px;">
-      <input type="text" id="projectFilter" placeholder="Filter by technology..." class="form-control filter-input">
+    <p class="page-subtitle"><%= t('Showcase proyek, karya teknis, dan kontribusi open source.', 'A showcase of my recent work and open source contributions.') %></p>
+    
+    <!-- Search Input Field -->
+    <div style="margin-top: 1.5rem; max-width: 450px;">
+      <input type="text" id="projectSearch" placeholder="<%= t('Cari nama proyek atau teknologi...', 'Filter by project name or technology...') %>" value="<%= _searchQ %>" class="form-control filter-input" style="width: 100%;">
     </div>
+
+    <!-- Technology Filter Chips / Buttons Bar -->
+    <% if (_usedTechs.length > 0) { %>
+      <div class="filter-bar" style="margin-top: 1.25rem;" aria-label="<%= t('Filter Berdasarkan Teknologi', 'Filter by Technology') %>">
+        <button type="button" class="filter-btn <%= !_selTech ? 'active' : '' %>" data-tech="all">
+          <%= t('Semua', 'All') %> (<%= projects ? projects.length : 0 %>)
+        </button>
+        <% _usedTechs.forEach(tech => { %>
+          <button type="button" class="filter-btn <%= _selTech.toLowerCase() === tech.toLowerCase() ? 'active' : '' %>" data-tech="<%= tech %>">
+            <%= tech %>
+          </button>
+        <% }) %>
+      </div>
+    <% } %>
   </div>
 </header>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const filterInput = document.getElementById('projectFilter');
-  const rows = document.querySelectorAll('.proj-row');
-  
-  if (filterInput) {
-    filterInput.addEventListener('input', (e) => {
-      const term = e.target.value.toLowerCase();
-      rows.forEach(row => {
-        const text = row.innerText.toLowerCase();
-        row.style.display = text.includes(term) ? 'grid' : 'none';
-      });
-    });
-  }
-});
-</script>
-
 <section class="section">
   <div class="container">
-    <div class="proj-list animate-on-scroll">
+    <div id="noMatchMessage" class="empty" style="display: none; text-align: center; padding: 3rem 1.5rem; margin-bottom: 2rem;">
+      <p style="font-weight: 700; font-size: 1.1rem; margin-bottom: 0.5rem;"><%= t('Tidak Ada Proyek Sesuai Filter', 'No Projects Match This Filter') %></p>
+      <p style="color: var(--ink-2); font-size: 0.95rem; margin-bottom: 1rem;"><%= t('Coba pilih teknologi lain atau bersihkan pencarian Anda.', 'Try selecting a different technology or clearing your search term.') %></p>
+      <button type="button" id="resetFilterBtn" class="btn btn-sm" style="background: var(--ink); color: var(--paper); cursor: pointer;"><%= t('Reset Filter', 'Reset Filter') %></button>
+    </div>
+
+    <div class="proj-list animate-on-scroll" id="projectList">
       <% if (typeof projects !== 'undefined' && projects.length > 0) { %>
         <% projects.forEach((project, i) => { %>
-          <div class="proj-row">
+          <% const techArray = Array.isArray(project.technologies) ? project.technologies : []; %>
+          <% const techAttr = techArray.map(t => String(t).trim().toLowerCase()).join('||'); %>
+          
+          <div class="proj-row" data-techs="<%= techAttr %>" data-title="<%= (project.title || '').toLowerCase() %>" data-desc="<%= (project.description || '').toLowerCase() %>">
             <div class="proj-num"><%= String(i + 1).padStart(2, '0') %></div>
             <div class="proj-body">
               <h3 class="proj-title"><a href="/projects/<%= project.slug %>"><%= project.title %></a></h3>
-              <p class="proj-excerpt"><%= tField(project, 'description') ? tField(project, 'description').substring(0, 120) + (tField(project, 'description').length > 120 ? '...' : '') : '' %></p>
+              <p class="proj-excerpt"><%= tField(project, 'description') ? tField(project, 'description').substring(0, 140) + (tField(project, 'description').length > 140 ? '...' : '') : '' %></p>
               
-              <% if (project.technologies && Array.isArray(project.technologies) && project.technologies.length > 0) { %>
+              <% if (techArray.length > 0) { %>
                 <div class="tag-list">
-                  <% project.technologies.slice(0, 4).forEach(tech => { %>
-                    <span class="tag"><%= tech %></span>
+                  <% techArray.forEach(tech => { %>
+                    <span class="tag tech-chip" data-tech="<%= tech %>" style="cursor: pointer; transition: transform 0.15s ease;" title="<%= t('Filter proyek dengan ', 'Filter projects by ') + tech %>"><%= tech %></span>
                   <% }) %>
                 </div>
               <% } %>
@@ -48,33 +60,133 @@ document.addEventListener('DOMContentLoaded', () => {
             <div class="proj-links">
               <a href="/projects/<%= project.slug %>" class="btn btn-sm link-arrow">Case Study <span>→</span></a>
               <% if (project.project_url) { %>
-                <a href="<%= project.project_url %>" target="_blank" class="btn btn-sm btn-outline">Live App</a>
+                <a href="<%= project.project_url %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline">Live App</a>
               <% } %>
               <% if (project.github_url) { %>
-                <a href="<%= project.github_url %>" target="_blank" class="btn btn-sm btn-outline">Code</a>
+                <a href="<%= project.github_url %>" target="_blank" rel="noopener noreferrer" class="btn btn-sm btn-outline">Code</a>
               <% } %>
             </div>
           </div>
         <% }) %>
       <% } else { %>
         <div class="empty">
-          <p>No projects found.</p>
+          <p><%= t('Belum ada proyek terpublikasi.', 'No published projects found.') %></p>
         </div>
       <% } %>
     </div>
-
-    <% if (typeof pagination !== 'undefined' && pagination.totalPages > 1) { %>
-      <div class="pagination-bar">
-        <% if (pagination.page > 1) { %>
-          <a href="?page=<%= pagination.page - 1 %>" class="btn btn-sm">&larr; Prev</a>
-        <% } %>
-        <span>
-          Page <%= pagination.page %> / <%= pagination.totalPages %>
-        </span>
-        <% if (pagination.page < pagination.totalPages) { %>
-          <a href="?page=<%= pagination.page + 1 %>" class="btn btn-sm">Next &rarr;</a>
-        <% } %>
-      </div>
-    <% } %>
   </div>
 </section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const searchInput = document.getElementById('projectSearch');
+  const projRows = document.querySelectorAll('.proj-row');
+  const techChips = document.querySelectorAll('.tech-chip');
+  const noMatchMsg = document.getElementById('noMatchMessage');
+  const resetBtn = document.getElementById('resetFilterBtn');
+
+  let activeTech = "<%= _selTech %>".trim().toLowerCase();
+
+  function applyFilters() {
+    const searchTerm = (searchInput ? searchInput.value : '').trim().toLowerCase();
+    let visibleCount = 0;
+
+    projRows.forEach(row => {
+      const title = row.getAttribute('data-title') || '';
+      const desc = row.getAttribute('data-desc') || '';
+      const techs = (row.getAttribute('data-techs') || '').split('||');
+
+      // Check technology match
+      let matchesTech = true;
+      if (activeTech && activeTech !== 'all') {
+        matchesTech = techs.some(t => t.trim().toLowerCase() === activeTech);
+      }
+
+      // Check search keyword match
+      let matchesSearch = true;
+      if (searchTerm) {
+        matchesSearch = title.includes(searchTerm) || desc.includes(searchTerm) || techs.some(t => t.includes(searchTerm));
+      }
+
+      if (matchesTech && matchesSearch) {
+        row.style.display = 'grid';
+        visibleCount++;
+      } else {
+        row.style.display = 'none';
+      }
+    });
+
+    if (noMatchMsg) {
+      noMatchMsg.style.display = (visibleCount === 0 && projRows.length > 0) ? 'block' : 'none';
+    }
+
+    // Update active state on filter buttons
+    filterBtns.forEach(btn => {
+      const bTech = (btn.getAttribute('data-tech') || '').toLowerCase();
+      if ((!activeTech || activeTech === 'all') && bTech === 'all') {
+        btn.classList.add('active');
+      } else if (bTech === activeTech) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+  }
+
+  // Filter button clicks
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tech = btn.getAttribute('data-tech') || 'all';
+      activeTech = tech.toLowerCase();
+      
+      // Update URL query string without reloading page
+      const url = new URL(window.location);
+      if (activeTech === 'all') {
+        url.searchParams.delete('tech');
+      } else {
+        url.searchParams.set('tech', tech);
+      }
+      window.history.replaceState({}, '', url);
+
+      applyFilters();
+    });
+  });
+
+  // Clickable tech tag chips inside project rows
+  techChips.forEach(chip => {
+    chip.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const tech = chip.getAttribute('data-tech');
+      if (tech) {
+        activeTech = tech.toLowerCase();
+        const url = new URL(window.location);
+        url.searchParams.set('tech', tech);
+        window.history.replaceState({}, '', url);
+        applyFilters();
+      }
+    });
+  });
+
+  // Live search input
+  if (searchInput) {
+    searchInput.addEventListener('input', applyFilters);
+  }
+
+  // Reset button
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      activeTech = 'all';
+      if (searchInput) searchInput.value = '';
+      const url = new URL(window.location);
+      url.searchParams.delete('tech');
+      url.searchParams.delete('q');
+      window.history.replaceState({}, '', url);
+      applyFilters();
+    });
+  }
+
+  // Initial filter run on page load
+  applyFilters();
+});
+</script>

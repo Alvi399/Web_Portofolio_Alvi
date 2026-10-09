@@ -90,27 +90,36 @@ exports.about = async (req, res) => {
 
 exports.projects = async (req, res) => {
   try {
-    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
-    const limit = 12;
-    const offset = (page - 1) * limit;
     const profile = await Profile.findOne();
-    const { count, rows: projects } = await Project.findAndCountAll({
+    const selectedTech = (req.query.tech || '').trim();
+    const searchQuery = (req.query.q || '').trim();
+
+    // Fetch all published projects for seamless instant technology filtering
+    const allPublished = await Project.findAll({
       where: PUBLISHED,
-      order: [['sort_order', 'ASC']],
-      limit,
-      offset
+      order: [['sort_order', 'ASC'], ['createdAt', 'DESC']]
     });
-    const totalPages = Math.max(1, Math.ceil(count / limit));
+
+    // Extract unique technologies used across all published projects
+    const techSet = new Set();
+    allPublished.forEach(p => {
+      const techList = Array.isArray(p.technologies) ? p.technologies : [];
+      techList.forEach(t => {
+        if (t && String(t).trim()) {
+          techSet.add(String(t).trim());
+        }
+      });
+    });
+    const usedTechnologies = Array.from(techSet).sort((a, b) => a.localeCompare(b));
+
     res.render('projects', {
       title: 'Projects',
       profile: profile || {},
-      projects,
+      projects: allPublished,
+      usedTechnologies,
+      selectedTech,
+      searchQuery,
       currentPage: 'projects',
-      pagination: {
-        page,
-        totalPages,
-        totalItems: count
-      },
       meta: {
         path: '/projects',
         description: 'Kumpulan project yang pernah saya bangun, lengkap dengan teknologi dan tautan kode.'
@@ -121,6 +130,7 @@ exports.projects = async (req, res) => {
     renderError(res, 500, 'Error', 'Server error');
   }
 };
+
 
 exports.projectDetail = async (req, res) => {
   try {
