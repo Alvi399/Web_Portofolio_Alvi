@@ -1,50 +1,64 @@
-# 🚀 Panduan Hosting Web Portofolio Alvi & MCP Server (Debian + Cloudflare Tunnel)
+# 🚀 Panduan Step-by-Step Hosting Debian Server + PM2 + Cloudflare Tunnel
 
-Panduan ini menjelaskan cara melakukan *deploy* dan *hosting* aplikasi Web Portofolio Express beserta **Hosted MCP Server (Model Context Protocol)** pada server Linux berbasis **Debian (Debian 11 / Debian 12)** menggunakan **Cloudflare Tunnel (`cloudflared`)**, **Node.js**, **MariaDB/MySQL**, dan **PM2 Process Manager**.
+Dokumen ini adalah panduan **step-by-step** untuk melakukan *deploy* dan *hosting* Web Portofolio Alvi beserta **Hosted MCP Server (Model Context Protocol)** di server berbasis **Debian (Debian 11 / Debian 12)**.
 
----
-
-## ⚡ Jawaban Singkat: Port Berapa yang Ditembak?
-
-👉 **Tembak ke PORT `3005`** (`http://localhost:3005` atau `http://127.0.0.1:3005`).
-
-Pada konfigurasi **Cloudflare Tunnel (Zero Trust Dashboard)**:
-* **Service**: `HTTP`
-* **URL**: `localhost:3005` (atau `127.0.0.1:3005`)
-
-> 💡 **Keuntungan Cloudflare Tunnel**:
-> 1. **Tidak perlu Buka Port / Port Forwarding** di router / VPS IP Publik.
-> 2. **Otomatis SSL HTTPS Gratis** dari Cloudflare Edge.
-> 3. **Otomatis Mendukung Streaming SSE MCP Server** (`/sse` & `/api/mcp/message`) tanpa perlu konfigurasi Nginx yang rumit!
+Aplikasi akan berjalan di `localhost:3005` menggunakan **PM2**, dan domain Anda akan diarahkan menggunakan **Cloudflare Tunnel (`cloudflared`)**.
 
 ---
 
-## 📋 Langkah-Langkah Deployment Lengkap di Debian
+## 📌 Mengapa MCP Server Otomatis Ikut Ter-Host?
 
-### 1. Update Server & Instal Dependensi
+Hosted MCP Server telah diintegrasikan langsung di dalam `app.js` pada rute `/sse` dan `/api/mcp/message`. 
+
+Saat Anda menjalankan `app.js` menggunakan PM2, **Web Portofolio + MCP Server berjalan bersamaan di port `3005` (`http://localhost:3005`)**. Saat Cloudflare Tunnel diarahkan ke `localhost:3005`, web portofolio DAN MCP server otomatis online dan siap diakses dari perangkat luar!
+
+---
+
+## ⚡ Ringkasan Parameter Cloudflare Tunnel
+
+Saat menambahkan Public Hostname di Cloudflare Zero Trust Dashboard:
+* **Service Type**: `HTTP`
+* **URL / Target**: `localhost:3005` *(atau `127.0.0.1:3005`)*
+
+---
+
+## 📋 LANGKAH DEMI LANGKAH (STEP-BY-STEP) DEPLOYMENT
+
+### Step 1: Update Repositori Debian & Instal Tools Utama
+Buka terminal Debian server Anda dan jalankan:
 ```bash
 sudo apt update && sudo apt upgrade -y
-sudo apt install -y curl wget git build-essential MariaDB-server mariadb-client
+sudo apt install -y curl wget git build-essential mariadb-server mariadb-client
 ```
 
 ---
 
-### 2. Instal Node.js (v20 LTS) & PM2
+### Step 2: Instal Node.js (v20 LTS) & PM2
 ```bash
+# Tambahkan repo NodeSource Node.js v20
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt install -y nodejs
+
+# Instal Process Manager PM2 secara global
 sudo npm install -g pm2
+
+# Verifikasi instalasi
+node -v   # Output: v20.x.x
+pm2 -v    # Output: 5.x.x
 ```
 
 ---
 
-### 3. Setup Database MariaDB/MySQL
+### Step 3: Setup Database MariaDB / MySQL
 ```bash
+# Pastikan MariaDB berjalan otomatis saat boot
 sudo systemctl enable --now mariadb
+
+# Masuk ke MySQL console sebagai root
 sudo mysql -u root
 ```
 
-Jalankan perintah SQL berikut:
+Di dalam konsol MySQL, jalankan query berikut:
 ```sql
 CREATE DATABASE web_portofolio_alvi CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 CREATE USER 'alvi_user'@'localhost' IDENTIFIED BY 'PasswordRahasiaAnda123!';
@@ -55,112 +69,116 @@ EXIT;
 
 ---
 
-### 4. Clone Repository & Konfigurasi `.env`
+### Step 4: Clone Repository & Buat File Environment (`.env`)
 
 ```bash
+# Buat folder aplikasi
 sudo mkdir -p /var/www
 sudo chown -R $USER:$USER /var/www
 cd /var/www
-git clone <URL_REPOSITORY_ANDA> web_portofolio_alvi
+
+# Clone repository
+git clone <URL_REPOSITORY_GITHUB_ANDA> web_portofolio_alvi
 cd web_portofolio_alvi
 
-# Instal dependensi
+# Instal dependensi produksi
 npm install --production
 
-# Buat file .env
+# Salin template .env
 cp .env.example .env
 nano .env
 ```
 
-**Isi file `.env`**:
+**Sesuaikan isi `.env` di Debian**:
 ```env
 NODE_ENV=production
 PORT=3005
 
-# Database
+# Database Configuration
 DB_HOST=127.0.0.1
 DB_PORT=3306
 DB_USER=alvi_user
 DB_PASS=PasswordRahasiaAnda123!
 DB_NAME=web_portofolio_alvi
 
-# Sesi & Keamanan
-SESSION_SECRET=UbahDenganStringAcakDanSangatPanjang987654321!
+# Session & Site Security
+SESSION_SECRET=UbahDenganStringRandomSangatPanjang987654321!
 SITE_URL=https://domain-anda.com
 
-# Kunci MCP Remote (Opsional)
+# MCP Server Security Key (Opsional untuk Akses Client AI Remote)
 MCP_API_KEY=KunciMcpRahasiaPerangkatRemote123!
 ```
 
 ---
 
-### 5. Inisialisasi & Reseed Database
+### Step 5: Inisialisasi Database (Populasikan Data Awal)
+Jalankan seeder untuk mengisi database secara otomatis dengan 10 data sampel per tabel:
 ```bash
 node seeders/seed_dummy_10.js
 ```
-*Output:* `✓ Database reseeded successfully with 10 records per table!`
+*Output yang muncul:*
+`✓ Database reseeded successfully with 10 records per table!`
 
 ---
 
-### 6. Jalankan Aplikasi & MCP Server dengan PM2
+### Step 6: Jalankan Aplikasi & MCP Server Menggunakan PM2
 
 ```bash
+# Jalankan aplikasi Express + MCP Server di port 3005
 pm2 start app.js --name "alvi-portfolio"
+
+# Setup auto-start PM2 saat Debian server di-reboot
 pm2 startup
+```
+*(Salin perintah `sudo env PATH=...` yang muncul di layar terminal Anda lalu jalankan)*.
+
+```bash
+# Simpan daftar proses PM2
 pm2 save
 ```
-*(Salin & jalankan perintah `sudo env PATH=...` yang diberikan oleh PM2).*
+
+Cek apakah aplikasi berjalan lancar di localhost:
+```bash
+curl -I http://localhost:3005
+```
+*Output:* `HTTP/1.1 200 OK`
 
 ---
 
-### 7. Konfigurasi Cloudflare Tunnel (`cloudflared`)
+### Step 7: Sambungkan Cloudflare Tunnel (`cloudflared`)
 
-#### Opsi A: Melalui Cloudflare Zero Trust Dashboard (Disarankan / Sangat Mudah)
+#### Menggunakan Cloudflare Zero Trust Dashboard (Paling Mudah):
 1. Buka [Cloudflare Zero Trust Dashboard](https://one.dash.cloudflare.com/).
-2. Buka menu **Networks** &rarr; **Tunnels** &rarr; Klik **Create a Tunnel**.
-3. Pilih **Cloudflared**, beri nama tunnel (misal: `debian-alvi-portfolio`).
-4. Pilih OS **Debian** dan jalankan perintah install connector yang diberikan di terminal Debian Anda, contoh:
+2. Masuk ke **Networks** &rarr; **Tunnels** &rarr; Klik **Create a Tunnel**.
+3. Beri nama tunnel (misal: `debian-alvi-server`).
+4. Pilih OS **Debian** dan jalankan perintah instalasi connector yang diberikan Cloudflare di terminal Debian Anda, contoh:
    ```bash
    curl -L --output cloudflared.deb https://github.com/cloudflare/cloudflared/releases/latest/download/cloudflared-linux-amd64.deb
    sudo dpkg -i cloudflared.deb
-   sudo cloudflared service install <TOKEN_DARI_CLOUDFLARE_DASHBOARD>
+   sudo cloudflared service install <TOKEN_DARI_DASHBOARD>
    ```
-5. Di bagian **Public Hostnames**:
-   * **Subdomain**: *(kosongkan jika root domain)* atau isi `portfolio` / `mcp`.
-   * **Domain**: Pilih domain Anda (misal: `domain-anda.com`).
+5. Pada tab **Public Hostnames**:
+   * **Domain**: Domain Anda (misal: `alvikirana.com` atau `portfolio.alvikirana.com`).
    * **Type**: `HTTP`
-   * **URL**: `localhost:3005` (atau `127.0.0.1:3005`).
-6. Klik **Save Hostname**. Selesai! 🎉
-
-#### Opsi B: Melalui File Konfigurasi CLI (`config.yml`)
-Jika menggunakan CLI `cloudflared`:
-```yaml
-tunnel: <TUNNEL_UUID>
-credentials-file: /root/.cloudflared/<TUNNEL_UUID>.json
-
-ingress:
-  - hostname: domain-anda.com
-    service: http://localhost:3005
-  - service: http_status:404
-```
+   * **URL**: `localhost:3005`
+6. Klik **Save Hostname**.
 
 ---
 
-## 📡 8. Menggunakan MCP Server Remote via Cloudflare Tunnel
+### Step 8: Verifikasi MCP Server Remote dari Perangkat Lain
 
-Setelah Cloudflare Tunnel aktif menembak ke `localhost:3005`, **Hosted MCP Server** secara otomatis dapat diakses oleh Client AI (Cursor, Windsurf, Claude Desktop, dll.) dari perangkat mana saja di seluruh dunia!
+Setelah Cloudflare Tunnel mengarahkan domain ke `localhost:3005`, MCP Server Anda siap dihubungkan oleh AI Client (Cursor, Windsurf, Claude Desktop, Roo Code, dll.) dari laptop atau perangkat manapun!
 
-### Endpoint Remote MCP Server:
 * **SSE Streaming URL**: `https://domain-anda.com/sse`
 * **POST Message URL**: `https://domain-anda.com/api/mcp/message?sessionId=<SESSION_ID>`
-* **Header API Key** *(jika `MCP_API_KEY` diatur)*:
+* **HTTP Header (jika `MCP_API_KEY` diatur)**:
   `x-api-key: KunciMcpRahasiaPerangkatRemote123!`
 
-### Uji Coba dari Perangkat Lain (Terminal / Command Prompt):
+**Uji koneksi SSE dari terminal perangkat luar**:
 ```bash
 curl -N -H "Accept: text/event-stream" -H "x-api-key: KunciMcpRahasiaPerangkatRemote123!" https://domain-anda.com/sse
 ```
-*Output Event Stream:*
+*Output SSE Stream:*
 ```text
 event: endpoint
 data: /api/mcp/message?sessionId=...
@@ -168,9 +186,16 @@ data: /api/mcp/message?sessionId=...
 
 ---
 
-## 🛠️ 9. Perintah Perawatan (Maintenance)
+## 🛠️ Perintah Perawatan (Cheat Sheet)
 
-* **Cek Status Aplikasi Node.js**: `pm2 status`
-* **Cek Log Realtime**: `pm2 logs alvi-portfolio`
-* **Cek Status Cloudflare Tunnel**: `sudo systemctl status cloudflared`
+* **Cek Status PM2**: `pm2 status`
+* **Melihat Log Aplikasi**: `pm2 logs alvi-portfolio`
 * **Restart Aplikasi**: `pm2 restart alvi-portfolio`
+* **Cek Service Cloudflare Tunnel**: `sudo systemctl status cloudflared`
+* **Update Kode dari Repository**:
+  ```bash
+  cd /var/www/web_portofolio_alvi
+  git pull
+  npm install --production
+  pm2 restart alvi-portfolio
+  ```

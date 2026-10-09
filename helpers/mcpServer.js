@@ -381,11 +381,12 @@ function attachMcpToExpress(app) {
     const sessionId = req.query.sessionId;
     const transport = transports.get(sessionId);
     if (transport) {
-      await transport.handlePostMessage(req, res);
+      await transport.handlePostMessage(req, res, req.body);
     } else {
       res.status(400).json({ error: 'Active MCP session not found for this sessionId' });
     }
   });
+
 
   console.log('✓ Remote Hosted MCP Server attached at /sse & /api/mcp/message');
 }

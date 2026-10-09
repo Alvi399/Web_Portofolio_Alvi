@@ -16,6 +16,12 @@ function csrfMiddleware(req, res, next) {
     return next();
   }
 
+  // API and MCP endpoints do not use browser CSRF tokens
+  if (req.path.startsWith('/api/mcp') || req.path.startsWith('/api/track-event') || req.path === '/sse') {
+    return next();
+  }
+
+
   // For POST/PUT/DELETE, verify token
   const token = (req.body && req.body._csrf) ||
                 (req.query && req.query._csrf) ||
